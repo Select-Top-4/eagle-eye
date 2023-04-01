@@ -1,0 +1,42 @@
+[
+    {
+      "common_name": "Blue-crowned Trogon",
+      "species_code": "blctro1"
+    },
+    {
+      "common_name": "asian trogon sp.",
+      "species_code": "asitro1"
+    },
+    {
+      "common_name": "Surucua Trogon (Red-bellied)",
+      "species_code": "surtro3"
+    },
+    {
+      "common_name": "Mountain Trogon",
+      "species_code": "moutro1"
+    },
+    {
+      "common_name": "Black-tailed Trogon",
+      "species_code": "blttro1"
+    },
+    {
+      "common_name": "Black-throated Trogon (tenellus)",
+      "species_code": "bkttro7"
+    },
+    {
+      "common_name": "Collared Trogon (Xalapa)",
+      "species_code": "coltro2"
+    },
+    {
+      "common_name": "Diard's Trogon",
+      "species_code": "diatro1"
+    },
+    {
+      "common_name": "Cuban Trogon",
+      "species_code": "cubtro1"
+    },
+    {
+      "common_name": "Slaty-tailed Trogon (Chapman's)",
+      "species_code": "slttro3"
+    }
+  ]
