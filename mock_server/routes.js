@@ -11,10 +11,11 @@ const birdOfTheDay = async function(req, res) {
     // mock
     const bird_of_the_day = [
       {
-        "common_name": "Tahiti Petrel",
-        "scientific_name": "Pseudobulweria rostrata",
-        "species_description": "This Procellariiformes-related article is a stub. You can help Wikipedia by expanding it.",
-        "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Tahitipetrel1.jpg/220px-Tahitipetrel1.jpg"
+        "species_code": "nswowl",
+        "common_name": "Northern Saw-whet Owl",
+        "scientific_name": "Aegolius acadicus",
+        "species_description": "The northern saw-whet owl was formally described in 1788 by the German naturalist Johann Friedrich Gmelin in his revised and expanded edition of Carl Linnaeus's Systema Naturae. He placed it with the other owls in the genus Strix and coined the binomial name Strix acadicus.[3] Gmelin based his description on the \"Acadian owl\" from Nova Scotia that had been described and illustrated in 1781 by the English ornithologist John Latham in his multi-volume work A General Synopsis of Birds.[4][5] The northern saw-whet owl is now one of five species placed in the genus Aegolius that was introduced in 1829 by the German naturalist Johann Jakob Kaup.[6][7] The genus name is Latin for a screech owl, the word came from the Ancient Greek aigōlios meaning \"a bird of ill omen\". The specific epithet acadicus is from \"Acadia\", the name of a former French colony in Nova Scotia.[8]",
+        "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Male_Northern_Saw-whet_Owl_%287364047820%29.jpg/220px-Male_Northern_Saw-whet_Owl_%287364047820%29.jpg"
       }
     ]
     res.json(bird_of_the_day);
