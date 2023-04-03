@@ -9,7 +9,7 @@ const config = require('./config.json')
 // Route 1: GET /species/random
 const birdOfTheDay = async function(req, res) {
     // mock
-    const bird_of_the_day = [
+    const bird_of_the_day = 
       {
         "species_code": "nswowl",
         "common_name": "Northern Saw-whet Owl",
@@ -17,14 +17,14 @@ const birdOfTheDay = async function(req, res) {
         "species_description": "The northern saw-whet owl was formally described in 1788 by the German naturalist Johann Friedrich Gmelin in his revised and expanded edition of Carl Linnaeus's Systema Naturae. He placed it with the other owls in the genus Strix and coined the binomial name Strix acadicus.[3] Gmelin based his description on the \"Acadian owl\" from Nova Scotia that had been described and illustrated in 1781 by the English ornithologist John Latham in his multi-volume work A General Synopsis of Birds.[4][5] The northern saw-whet owl is now one of five species placed in the genus Aegolius that was introduced in 1829 by the German naturalist Johann Jakob Kaup.[6][7] The genus name is Latin for a screech owl, the word came from the Ancient Greek aigōlios meaning \"a bird of ill omen\". The specific epithet acadicus is from \"Acadia\", the name of a former French colony in Nova Scotia.[8]",
         "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Male_Northern_Saw-whet_Owl_%287364047820%29.jpg/220px-Male_Northern_Saw-whet_Owl_%287364047820%29.jpg"
       }
-    ]
+    
     res.json(bird_of_the_day);
 };
 
 // Route 4: GET /species/info
 // parameters: species_code
 const speciesInfo = async function(req, res) {
-  const species_info = [
+  const species_info = 
     {
       "common_name": "Black-capped Chickadee",
       "scientific_name": "Poecile atricapillus",
@@ -33,7 +33,7 @@ const speciesInfo = async function(req, res) {
       "family_common_name": "Tits, Chickadees, and Titmice",
       "family_scientific_name": "Paridae"
     }
-  ]
+  
   res.json(species_info);
 }
 

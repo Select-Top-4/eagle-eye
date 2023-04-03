@@ -21,6 +21,7 @@ connection.connect((err) => err && console.log(err));
 const birdOfTheDay = async function(req, res) {
   connection.query(`
   SELECT 
+    species_code,
     common_name,
     scientific_name,
     species_description,

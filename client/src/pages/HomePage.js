@@ -18,10 +18,10 @@ export default function HomePage() {
       .then(res => res.json())
       .then(
         resJson => {
-          setBirdOfTheDay(resJson[0])
+          setBirdOfTheDay(resJson)
           fetch(`http://${config.server_host}:${config.server_port}/species/info?species_code=${birdOfTheDay.species_code}`)
           .then(res => res.json())
-          .then(setBirdOfTheDayInfo(resJson[0]))
+          .then(setBirdOfTheDayInfo(resJson))
           .catch(error => console.log(error));
         })
       .then(console.log(birdOfTheDay))
