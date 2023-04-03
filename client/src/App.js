@@ -5,6 +5,7 @@ import { indigo, amber } from '@mui/material/colors'
 import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
 import SpeciesPage from './pages/SpeciesPage';
+import FamilyPage from './pages/FamilyPage';
 
 export const theme = createTheme({
   palette: {
@@ -21,6 +22,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/species/:species_code" element={<SpeciesPage />} />
+          <Route path="/family/:family_code" element={<FamilyPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

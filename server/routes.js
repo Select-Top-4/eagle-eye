@@ -22,6 +22,7 @@ const birdOfTheDay = async function(req, res) {
   connection.query(`
   SELECT 
     species_code,
+    family_code,
     common_name,
     scientific_name,
     species_description,

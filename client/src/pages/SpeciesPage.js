@@ -58,6 +58,9 @@ export default function SpeciesPage(species_code) {
       <CardActions>
         <Button component={Link} to="/" variant = "outlined" size="large">Back</Button>
       </CardActions>
+      <CardActions>
+        <Button component={Link} to= {`/family/${speciesInfo.family_code}`} variant = "outlined" size="large">Family Info</Button>
+      </CardActions>  
     </Card>
     </Box>
   

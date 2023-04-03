@@ -11,13 +11,13 @@ const birdOfTheDay = async function(req, res) {
     // mock
     const bird_of_the_day = 
       {
-        "species_code": "nswowl",
-        "common_name": "Northern Saw-whet Owl",
-        "scientific_name": "Aegolius acadicus",
-        "species_description": "The northern saw-whet owl was formally described in 1788 by the German naturalist Johann Friedrich Gmelin in his revised and expanded edition of Carl Linnaeus's Systema Naturae. He placed it with the other owls in the genus Strix and coined the binomial name Strix acadicus.[3] Gmelin based his description on the \"Acadian owl\" from Nova Scotia that had been described and illustrated in 1781 by the English ornithologist John Latham in his multi-volume work A General Synopsis of Birds.[4][5] The northern saw-whet owl is now one of five species placed in the genus Aegolius that was introduced in 1829 by the German naturalist Johann Jakob Kaup.[6][7] The genus name is Latin for a screech owl, the word came from the Ancient Greek aigōlios meaning \"a bird of ill omen\". The specific epithet acadicus is from \"Acadia\", the name of a former French colony in Nova Scotia.[8]",
-        "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Male_Northern_Saw-whet_Owl_%287364047820%29.jpg/220px-Male_Northern_Saw-whet_Owl_%287364047820%29.jpg"
+        "species_code": "rufmon1",
+        "family_code": "monarc2",
+        "common_name": "Rufous Monarch",
+        "scientific_name": "Symposiachrus rubiensis",
+        "species_description": "This Monarchidae-related article is a stub. You can help Wikipedia by expanding it.",
+        "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Naturalis_Biodiversity_Center_-_RMNH.AVES.136419_1_-_Monarcha_rubiensis_%28Meyer%2C_1874%29_-_Monarchidae_-_bird_skin_specimen.jpeg/220px-Naturalis_Biodiversity_Center_-_RMNH.AVES.136419_1_-_Monarcha_rubiensis_%28Meyer%2C_1874%29_-_Monarchidae_-_bird_skin_specimen.jpeg"
       }
-    
     res.json(bird_of_the_day);
 };
 
@@ -87,7 +87,7 @@ const sightingsRecent = async function(req, res) {
 // Route 6: GET /family/info
 // parameters: family_code
 const familyInfo = async function(req, res) {
-  const family_info = [
+  const family_info = 
     {
       "family_code": "trogon1",
       "family_scientific_name": "Trogonidae",
@@ -95,7 +95,6 @@ const familyInfo = async function(req, res) {
       "family_description": "The trogons and quetzals are birds in the order Trogoniformes /troʊˈɡɒnɪfɔːrmiːz/ which contains only one family, the Trogonidae. The family Trogonidae contains 46 species in seven genera. The fossil record of the trogons dates back 49 million years to the Early Eocene. They might constitute a member of the basal radiation of the order Coraciiformes and order Passeriformes or be closely related to mousebirds and owls. The word trogon is Greek for \"nibbling\" and refers to the fact that these birds gnaw holes in trees to make their nests.\n",
       "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Hispaniolan_Trogon_%28Priotelus_roseigaster%29_%288082799519%29.jpg/220px-Hispaniolan_Trogon_%28Priotelus_roseigaster%29_%288082799519%29.jpg"
     }
-  ]
   res.json(family_info)
 }
 
