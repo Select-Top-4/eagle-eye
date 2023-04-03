@@ -1,0 +1,14 @@
+{
+  "rds_host": "ebird.cwxwja0zvgnp.us-east-1.rds.amazonaws.com",
+  "rds_port": "3306",
+  "rds_user": "our-rds-username",
+  "rds_password": "our-rds-password",
+  "rds_db": "ebird",
+  "local_host": "127.0.0.1",
+  "local_port": "3306",
+  "local_user": "your-local-username",
+  "local_password": "your-local-password",
+  "local_db": "ebird",
+  "server_host": "localhost",
+  "server_port": "8080"
+}
