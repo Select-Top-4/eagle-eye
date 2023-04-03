@@ -2,7 +2,7 @@
   "rds_host": "ebird.cwxwja0zvgnp.us-east-1.rds.amazonaws.com",
   "rds_port": "3306",
   "rds_user": "selecttop4",
-  "rds_password": "34TQ32ywEi0cC1SpFrlXdGKioHDUKe0VvKQf0dI8KGg",
+  "rds_password": "",
   "rds_db": "ebird",
   "server_host": "localhost",
   "server_port": "8080"
