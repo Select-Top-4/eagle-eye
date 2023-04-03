@@ -23,7 +23,7 @@ export default function HomePage() {
           setBirdOfTheDay(resJson)
           fetch(`http://${config.server_host}:${config.server_port}/species/info?species_code=${birdOfTheDay.species_code}`)
           .then(res => res.json())
-          .then(setBirdOfTheDayInfo(resJson))
+          .then(resJson => setBirdOfTheDayInfo(resJson))
           .catch(error => console.log(error));
         })
       .then(console.log(birdOfTheDay))
@@ -73,11 +73,14 @@ export default function HomePage() {
       {birdOfTheDay.common_name}
       </Typography>
       <Typography>
+      {/* {birdOfTheDayInfo.species_description.length > 250 ?
+        `${birdOfTheDayInfo.species_description.substring(0,250)}...` : birdOfTheDayInfo.species_description
+      } */}
       {birdOfTheDayInfo.species_description}
       </Typography>
     </CardContent>
     <CardActions>
-      <Button component={Link} to= {`/species/${birdOfTheDay.species_code}`} variant = "outlined" size="large">View</Button>
+      <Button component={Link} to= {`/species/${birdOfTheDay.species_code}`} variant = "outlined" size="large">More</Button>
     </CardActions>
   </Card>
   </Box>
