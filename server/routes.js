@@ -1,13 +1,20 @@
 const mysql = require('mysql')
 const config = require('./config.json')
 
-const connection = mysql.createConnection({
+const connection = process.env.NODE_ENV === "production" ? mysql.createConnection({
   host: config.rds_host,
   user: config.rds_user,
   password: config.rds_password,
   port: config.rds_port,
   database: config.rds_db
+}) : mysql.createConnection({
+  host: config.local_host,
+  user: config.local_user,
+  password: config.local_password,
+  port: config.local_port,
+  database: config.local_db
 });
+
 connection.connect((err) => err && console.log(err));
 
 // Route 1: GET /species/random
