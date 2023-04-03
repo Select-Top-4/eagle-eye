@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, Divider, Link } from '@mui/material';
+import { Container, Divider} from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import config from '../config.json';
+import { Link } from 'react-router-dom';
+
 
 export default function HomePage() {
   const [birdOfTheDay, setBirdOfTheDay] = useState({});
@@ -75,7 +77,7 @@ export default function HomePage() {
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="large">View</Button>
+      <Button component={Link} to= {`/species/${birdOfTheDay.species_code}`} variant = "outlined" size="large">View</Button>
     </CardActions>
   </Card>
   </Box>
