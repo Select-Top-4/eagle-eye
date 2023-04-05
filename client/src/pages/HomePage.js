@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 
 
 export default function HomePage() {
-  const [birdOfTheDay, setBirdOfTheDay] = useState({});
-  const [birdOfTheDayInfo, setBirdOfTheDayInfo] = useState({});
+  const [birdOfTheDay, setBirdOfTheDay] = useState();
   const [selectedBird, setSelectedBird] = useState(null);
   useEffect(() => {
     fetch(`http://${config.server_host}:${config.server_port}/species/random`)
@@ -21,11 +20,7 @@ export default function HomePage() {
       .then(
         resJson => {
           setBirdOfTheDay(resJson)
-          fetch(`http://${config.server_host}:${config.server_port}/species/info?species_code=${birdOfTheDay.species_code}`)
-          .then(res => res.json())
-          .then(resJson => setBirdOfTheDayInfo(resJson))
-          .catch(error => console.log(error));
-        })
+          })
       .then(console.log(birdOfTheDay))
       .catch(error => console.log(error));
   }, []);
@@ -61,7 +56,7 @@ export default function HomePage() {
       component="img"
       sx={{ padding: "1em 1em 1em 1em", objectFit: "contain" }}
       height = "250"
-      image={"https://" + birdOfTheDayInfo.species_img_link}
+      image={"https://" + birdOfTheDay.species_img_link}
       alt={birdOfTheDay.common_name}
       title={birdOfTheDay.common_name}
     />
@@ -73,10 +68,10 @@ export default function HomePage() {
       {birdOfTheDay.common_name}
       </Typography>
       <Typography>
-      {/* {birdOfTheDayInfo.species_description.length > 250 ?
-        `${birdOfTheDayInfo.species_description.substring(0,250)}...` : birdOfTheDayInfo.species_description
+      {/* {birdOfTheDay.species_description.length > 250 ?
+        `${birdOfTheDay.species_description.substring(0,250)}...` : birdOfTheDay.species_description
       } */}
-      {birdOfTheDayInfo.species_description}
+      {birdOfTheDay.species_description}
       </Typography>
     </CardContent>
     <CardActions>
