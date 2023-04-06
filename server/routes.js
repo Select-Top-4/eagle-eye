@@ -218,13 +218,51 @@ const sightingsRecent = async function(req, res) {
 // Route 6: GET /family/info
 // parameters: family_code
 const familyInfo = async function(req, res) {
-
+  connection.query(`
+  SELECT family.family_code,
+  family_scientific_name,
+  family_common_name,
+  family_description,
+  species_img_link
+  FROM   family
+    JOIN species
+      ON family.family_code = species.family_code
+  WHERE  family.family_code = '{page_family_code}'
+  ORDER  BY RAND ()
+  LIMIT  1; 
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      console.log(data);
+      res.json({
+        family_code: data[0].family.family_code
+      });
+    }
+  });
 }
 
 // Route 7: GET /family/species
 // parameters: family_code
 const familySpecies = async function(req, res) {
-
+  connection.query(`
+  SELECT common_name,
+  species_code
+    FROM   species
+    WHERE  family_code = '{page_family_code}'
+    ORDER  BY RAND();
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      console.log(data);
+      res.json({
+        family_code: data[0].family_code
+      });
+    }
+  });
 }
 
 // Route 8: GET /family/heat-map
