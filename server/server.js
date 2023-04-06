@@ -7,6 +7,7 @@ const app = express();
 app.use(cors({
   origin: '*',
 }));
+app.use(express.json());
 
 // We use express to define our various API endpoints and
 // provide their handlers that we implemented in routes.js
@@ -25,7 +26,7 @@ app.use(cors({
   app.get('/family/info', routes.familyInfo);
   app.get('/sightings/recent', routes.sightingsRecent);
   app.get('/sightings/filtered', routes.sightingsFiltered);
-  app.get('/location/heat-map', routes.locationHeatMap);
+  app.post('/location/heat-map', routes.locationHeatMap);
   app.get('/species/info', routes.speciesInfo);
   app.get('/species/random', routes.birdOfTheDay);
   
