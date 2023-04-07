@@ -242,9 +242,8 @@ const getAllSpeciesByFamilyCode = async function(req, res) {
 }
 
 /**
- * Route 7: POST /heatmap-observations
- * Search a heatmap of bird sightings, filtered by time range, species, family and location.
- *
+ * @route POST /heatmap-observations
+ * @description Search a heatmap of bird sightings, filtered by time range, species, family and location.
  * @param {Object} req - The request object. The request body can contain the following fields:
  *  - startDate {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
  *  - endDate {string} The end date for filtering sightings. If not provided, defaults to today's date.
