@@ -15,6 +15,7 @@ app.get('/sightings/filtered', routes.sightingsFiltered);
 app.get('/sightings/recent', routes.sightingsRecent);
 app.get('/family/:family_code', routes.getOneFamily);
 app.get('/family/:family_code/species', routes.getAllSpeciesByFamilyCode);
+app.get('/location/:location_id', routes.getLocationByID);
 app.post('/heatmap-observations', routes.searchHeatMapObservations);
   
 app.listen(config.server_port, () => {
