@@ -184,60 +184,67 @@ const familySpecies = async function(req, res) {
 
 /**
  * Route 7: POST /heatmap
- * Get a heatmap of bird sightings, filtered by time range, species and location.
+ * Get a heatmap of bird sightings, filtered by time range, species, family and location.
  *
  * @param {Object} req - The request object. The request body can contain the following fields:
  *  - startDate {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
  *  - endDate {string} The end date for filtering sightings. If not provided, defaults to today's date.
- *  - commonName {string} The common name of the species to filter by.
- *  - scientificName {string} The scientific name of the species to filter by.
- *  - subnational1Name {string} The name of the subnational1 location to filter by.
+ *  - commonName {string} The common name of the species to filter by. If not provided, defaults to all species.
+ *  - scientificName {string} The scientific name of the species to filter by. If not provided, defaults to all species.
+ *  - familyCommonName {string} The common name of the bird family to filter by. If not provided, defaults to all families.
+ *  - familyScientificName {string} The scientific name of the bird family to filter by. If not provided, defaults to all families.
+ *  - subnational1Name {string} The name of the subnational1 location to filter by. If not provided, defaults to all locations.
  * @param {Object} res - The response object
- *
- * @returns {Object} An array of objects, each representing a location with species sightings, including the following fields:
+ * @returns {Object[]} An array of objects, each representing a location with species sightings, including the following fields:
  *  - species_code {string} The species code of the observed bird.
  *  - family_code {string} The family code of the observed bird.
+ *  - location_id {string} The location ID of the observed bird.
  *  - latitude {number} The latitude of the location where the observation was made.
  *  - longitude {number} The longitude of the location where the observation was made.
  *  - scientific_name {string} The scientific name of the observed bird.
  *  - common_name {string} The common name of the observed bird.
+ *  - family_common_name {string} The common name of the bird family.
+ *  - family_scientific_name {string} The scientific name of the bird family.
+ *  - subnational1_name {string} The name of the subnational1 location of the observed bird.
+ *  - subnational2_name {string} The name of the subnational2 location of the observed bird.
  *  - total_count {number} The total count of observations for this species at this location.
- *
  * @example
  * // Request:
- * // POST /location/heatmap
+ * // POST /heatmap
+ * // Request Body:
  * // {
- * //   "startDate": "2023-01-01",
- * //   "endDate": "2023-3-31",
- * //   "commonName": "sparrow",
- * //   "subnational1Name": "California"
+ * //     "startDate": "2023-03-03",
+ * //     "commonName": "hawk",
+ * //     "familyCommonName": "Eagles"
  * // }
  * //
  * // Response:
  * // [
  * //   {
- * //     "species_code": "AMGOL",
- * //     "family_code": "Emberizidae",
- * //     "latitude": 37.7749,
- * //     "longitude": -122.4194,
- * //     "scientific_name": "Aimophila ruficeps",
- * //     "common_name": "Rufous-crowned Sparrow",
- * //     "total_count": 1
- * //   },
- * //   {
- * //     "species_code": "FISP",
- * //     "family_code": "Fringillidae",
- * //     "latitude": 37.7749,
- * //     "longitude": -122.4194,
- * //     "scientific_name": "Spinus psaltria",
- * //     "common_name": "Lesser Goldfinch",
- * //     "total_count": 2
+ * //       "species_code": "reshaw",
+ * //       "family_code": "accipi1",
+ * //       "location_id": "L1000048",
+ * //       "latitude": 37.6939406,
+ * //       "longitude": -89.3823087,
+ * //       "common_name": "Red-shouldered Hawk",
+ * //       "scientific_name": "Buteo lineatus",
+ * //       "family_common_name": "Hawks, Eagles, and Kites",
+ * //       "family_scientific_name": "Accipitridae",
+ * //       "subnational1_name": "Illinois",
+ * //       "subnational2_name": "Jackson",
+ * //       "total_count": 2
  * //   },
  * //   ...
  * // ]
  */
 const heatMap = async function(req, res) {
-  let { startDate, endDate, commonName, scientificName, subnational1Name } = req.body;
+  let { startDate, 
+        endDate, 
+        commonName, 
+        scientificName, 
+        familyCommonName, 
+        familyScientificName, 
+        subnational1Name } = req.body;
 
   if (!startDate && !endDate) {
     const today = new Date();
@@ -252,6 +259,8 @@ const heatMap = async function(req, res) {
 
   commonName = commonName ? commonName.trim().toLowerCase() : undefined;
   scientificName = scientificName ? scientificName.trim().toLowerCase() : undefined;
+  familyCommonName = familyCommonName ? familyCommonName.trim().toLowerCase() : undefined;
+  familyScientificName = familyScientificName ? familyScientificName.trim().toLowerCase() : undefined;
   subnational1Name = subnational1Name ? subnational1Name.trim().toLowerCase() : undefined;
 
   let query = `
@@ -269,16 +278,18 @@ const heatMap = async function(req, res) {
         JOIN species 
           ON observation.species_code = species.species_code
         WHERE 
-          (${commonName ? `LOWER(common_name) LIKE '%${commonName}%'` : '1 = 1'})
-          AND (${scientificName ? `LOWER(scientific_name) LIKE '%${scientificName}%'` : '1 = 1'})
-          AND (${startDate ? `CAST(observation_date AS DATE) >= '${startDate}'` : '1 = 1'})
-          AND (${endDate ? `CAST(observation_date AS DATE) <= '${endDate}'` : '1 = 1'})
+          ${commonName ? `LOWER(common_name) LIKE '%${commonName}%'` : '1 = 1'}
+          AND ${scientificName ? `LOWER(scientific_name) LIKE '%${scientificName}%'` : '1 = 1'}
+          AND ${startDate ? `CAST(observation_date AS DATE) >= '${startDate}'` : '1 = 1'}
+          AND ${endDate ? `CAST(observation_date AS DATE) <= '${endDate}'` : '1 = 1'}
       ), 
       locations_filtered AS (
         SELECT 
           location_id,
           latitude,
-          longitude
+          longitude,
+          subnational1_name,
+          subnational2_name
         FROM 
           ebird_location E
         JOIN subnational2 S2
@@ -287,20 +298,38 @@ const heatMap = async function(req, res) {
           ON S2.subnational1_code = S1.subnational1_code
         WHERE 
           ${subnational1Name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1Name}%'` : '1 = 1'}
+      ),
+      families_filtered AS (
+        SELECT
+          family_code,
+          family_common_name,
+          family_scientific_name
+        FROM
+          family
+        WHERE
+          ${familyCommonName ? `LOWER(family_common_name) LIKE '%${familyCommonName}%'` : '1 = 1'}
+          AND ${familyScientificName ? `LOWER(family_scientific_name) LIKE '%${familyScientificName}%'` : '1 = 1'}
       )
     SELECT 
       species_code,
-      family_code,
+      S.family_code,
+      S.location_id,
       latitude,
       longitude,
-      scientific_name,
       common_name,
+      scientific_name,
+      family_common_name,
+      family_scientific_name,
+      subnational1_name,
+      subnational2_name,
       Sum(observation_count) AS total_count
     FROM 
       sightings_filtered S
+    JOIN families_filtered F
+      ON S.family_code = F.family_code
     JOIN locations_filtered L
       ON S.location_id = L.location_id
-    GROUP BY 1, 2, 3, 4;
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11;
   `;
 
   connection.query(query, (err, results) => {
