@@ -1,8 +1,6 @@
 const mysql = require('mysql');
 const config = require('./config.json');
 
-// Create a MySQL connection using the configuration settings from config.json.
-// Use different settings depending on the environment (production or development).
 const connection = process.env.NODE_ENV === "production" ? mysql.createConnection({
   host: config.rds_host,
   user: config.rds_user,
@@ -17,16 +15,14 @@ const connection = process.env.NODE_ENV === "production" ? mysql.createConnectio
   database: config.local_db
 });
 
-// Connect to the MySQL database.
-// If there is an error, log it to the console.
 connection.connect((err) => err && console.log(err));
 
 /**
- * GET /species/random
- * Get a random bird species with common name, scientific name, description, and image link.
+ * Route 1: GET /species/random
+ * Get a randomly selected bird species with common name, scientific name, description, and image link.
  *
- * @param {Object} req - The request object
- * @param {Object} res - The response object
+ * @param {Object} req - The request object (unused).
+ * @param {Object} res - The response object.
  *
  * @returns {Object} The bird species object, including common name, scientific name, description, and image link.
  *
@@ -36,13 +32,15 @@ connection.connect((err) => err && console.log(err));
  * //
  * // Response:
  * // {
- * //   "common_name": "American Robin",
- * //   "scientific_name": "Turdus migratorius",
- * //   "species_description": "The American Robin is a migratory songbird...",
- * //   "species_img_link": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Turdus_migratorius_%28Eastern_phenotype%29_-Ottawa%2C_Ontario%2C_Canada-8.jpg/640px-Turdus_migratorius_%28Eastern_phenotype%29_-Ottawa%2C_Ontario%2C_Canada-8.jpg"
+ * //   "species_code": "amecro",
+ * //   "family_code": "tur",
+ * //   "common_name": "American Crow",
+ * //   "scientific_name": "Corvus brachyrhynchos",
+ * //   "species_description": "The American Crow is a large passerine bird...",
+ * //   "species_img_link": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Corvus_brachyrhynchos_01.jpg/640px-Corvus_brachyrhynchos_01.jpg"
  * // }
  */
-const birdOfTheDay = async function(req, res) {
+const birdOfTheDay = async function(_, res) {
   connection.query(`
     SELECT 
       species_code,
@@ -98,60 +96,69 @@ const speciesInfo = async function(req, res) {
   }
 )}
 
-// Route 2: POST /location/heat-map
-// Get a heat map of bird sightings for a given location and time period.
-//
-// @param {string} req.body.start_date - The start date of the time period to filter sightings by (YYYY-MM-DD).
-// @param {string} req.body.end_date - The end date of the time period to filter sightings by (YYYY-MM-DD).
-// @param {string} req.body.common_name - The common name of the bird species to filter sightings by.
-// @param {string} req.body.scientific_name - The scientific name of the bird species to filter sightings by.
-// @param {string} req.body.subnational1_name - The name of the top-level administrative subdivision to filter locations by (e.g., state).
-//
-// @returns {Object[]} An array of objects representing bird sightings in the specified location(s) and time period.
-// Each object includes the following properties:
-//   - latitude (number): The latitude of the sighting location.
-//   - longitude (number): The longitude of the sighting location.
-//   - scientific_name (string): The scientific name of the bird species observed.
-//   - common_name (string): The common name of the bird species observed.
-//   - total_count (number): The total number of observations of the bird species in the specified time period.
-//
-// @example
-// // Request:
-// // POST /location/heat-map
-// // {
-// //   "start_date": "2022-01-01",
-// //   "end_date": "2022-12-31",
-// //   "common_name": "American Robin",
-// //   "scientific_name": "",
-// //   "subnational1_name": "California"
-// // }
-// //
-// // Response:
-// // [
-// //   {
-// //     "latitude": 37.7749,
-// //     "longitude": -122.4194,
-// //     "scientific_name": "Turdus migratorius",
-// //     "common_name": "American Robin",
-// //     "total_count": 15
-// //   },
-// //   {
-// //     "latitude": 34.0522,
-// //     "longitude": -118.2437,
-// //     "scientific_name": "Turdus migratorius",
-// //     "common_name": "American Robin",
-// //     "total_count": 8
-// //   }
-// // ]
+/**
+ * Route 2: POST /location/heatmap
+ * Get a heatmap of bird sightings, filtered by time range, species, and location.
+ *
+ * @param {Object} req - The request object. The request body can contain the following fields:
+ *  - startDate {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
+ *  - endDate {string} The end date for filtering sightings. If not provided, defaults to today's date.
+ *  - commonName {string} The common name of the species to filter by.
+ *  - scientificName {string} The scientific name of the species to filter by.
+ *  - subnational1Name {string} The name of the subnational1 location to filter by.
+ * @param {Object} res - The response object
+ *
+ * @returns {Object} An array of objects, each representing a location with species sightings, including the following fields:
+ *  - species_code {string} The species code of the observed bird.
+ *  - family_code {string} The family code of the observed bird.
+ *  - latitude {number} The latitude of the location where the observation was made.
+ *  - longitude {number} The longitude of the location where the observation was made.
+ *  - scientific_name {string} The scientific name of the observed bird.
+ *  - common_name {string} The common name of the observed bird.
+ *  - total_count {number} The total count of observations for this species at this location.
+ *
+ * @example
+ * // Request:
+ * // POST /location/heatmap
+ * // {
+ * //   "startDate": "2023-01-01",
+ * //   "endDate": "2023-3-31",
+ * //   "commonName": "sparrow",
+ * //   "subnational1Name": "California"
+ * // }
+ * //
+ * // Response:
+ * // [
+ * //   {
+ * //     "species_code": "AMGOL",
+ * //     "family_code": "Emberizidae",
+ * //     "latitude": 37.7749,
+ * //     "longitude": -122.4194,
+ * //     "scientific_name": "Aimophila ruficeps",
+ * //     "common_name": "Rufous-crowned Sparrow",
+ * //     "total_count": 1
+ * //   },
+ * //   {
+ * //     "species_code": "FISP",
+ * //     "family_code": "Fringillidae",
+ * //     "latitude": 37.7749,
+ * //     "longitude": -122.4194,
+ * //     "scientific_name": "Spinus psaltria",
+ * //     "common_name": "Lesser Goldfinch",
+ * //     "total_count": 2
+ * //   },
+ * //   ...
+ * // ]
+ */
 const locationHeatMap = async function(req, res) {
   let { startDate, endDate, commonName, scientificName, subnational1Name } = req.body;
 
   if (!startDate && !endDate) {
     const today = new Date();
-    startDate = '1900-01-01';
+    startDate = '2022-12-01';
     endDate = today.toISOString().slice(0, 10);
   } else if (!startDate) {
-    startDate = '1900-01-01';
+    startDate = '2022-12-01';
   } else if (!endDate) {
     const today = new Date();
     endDate = today.toISOString().slice(0, 10);
