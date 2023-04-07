@@ -72,21 +72,45 @@ const birdOfTheDay = async function(_, res) {
   });
 };
 
-// Route 4: GET /species-info
-// parameters: species_code
+/**
+ * Route 4: GET /species/info
+ * Get details for a specific bird species.
+ *
+ * @param {Object} req - The request object
+ * @param {string} req.query.species_code - The species code for the bird species to get details for.
+ * @param {Object} res - The response object
+ *
+ * @returns {Object} The bird species details object, including common name, scientific name, description, image link, family common name, and family scientific name.
+ *
+ * @example
+ * // Request:
+ * // GET /species/info?species_code=evegro
+ * //
+ * // Response:
+ * // {
+ * //   "common_name": "Evening Grosbeak",
+ * //   "scientific_name": "Coccothraustes vespertinus",
+ * //   "species_description": "The genus Hesperiphona was introduced by Charles Lucien Bonaparte in 1850.[6] The name is from Ancient Greek hesperos, \"evening\", and phone \"cry\", and the specific vespertina is Latin for \"evening\".[7]",
+ * //   "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Hesperiphona_vespertina_CT3.jpg/220px-Hesperiphona_vespertina_CT3.jpg",
+ * //   "family_common_name": "Finches, Euphonias, and Allies",
+ * //   "family_scientific_name": "Fringillidae"
+ * // }
+ */
 const speciesInfo = async function(req, res) {
   connection.query(`
-  SELECT 
-    species.common_name,
-    species.scientific_name,
-    species.species_description,
-    species.species_img_link,
-    family.family_common_name,
-    family.family_scientific_name
-  FROM   species  JOIN family
-    ON species.family_code = family.family_code
-  WHERE  species_code = '${req.query.species_code}' `,
- (err, data) => {
+    SELECT 
+      species.common_name,
+      species.scientific_name,
+      species.species_description,
+      species.species_img_link,
+      family.family_common_name,
+      family.family_scientific_name
+    FROM 
+      species  
+    JOIN family
+      ON species.family_code = family.family_code
+    WHERE species_code = '${req.query.species_code}';
+  `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({}); 
