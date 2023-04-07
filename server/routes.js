@@ -69,12 +69,7 @@ const birdOfTheDay = async function(req, res) {
       console.log(err);
       res.json({});
     } else {
-      res.json({
-        commonName: data[0].common_name,
-        scientificName: data[0].scientific_name,
-        speciesDescription: data[0].species_description,
-        speciesImgLink: data[0].species_img_link
-      });
+      res.json(data[0]);
     }
   });
 };
@@ -82,8 +77,26 @@ const birdOfTheDay = async function(req, res) {
 // Route 4: GET /species-info
 // parameters: species_code
 const speciesInfo = async function(req, res) {
-
-}
+  connection.query(`
+  SELECT 
+    species.common_name,
+    species.scientific_name,
+    species.species_description,
+    species.species_img_link,
+    family.family_common_name,
+    family.family_scientific_name
+  FROM   species  JOIN family
+    ON species.family_code = family.family_code
+  WHERE  species_code = '${req.query.species_code}' `,
+ (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({}); 
+    } else {
+      res.json(data[0]);
+    }
+  }
+)}
 
 // Route 2: POST /location/heat-map
 // Get a heat map of bird sightings for a given location and time period.
