@@ -146,10 +146,9 @@ const speciesInfo = async function(req, res) {
 const locationHeatMap = async function(req, res) {
   let { startDate, endDate, commonName, scientificName, subnational1Name } = req.body;
 
-  // Set default values for missing parameters.
   if (!startDate && !endDate) {
     const today = new Date();
-        startDate = '1900-01-01';
+    startDate = '1900-01-01';
     endDate = today.toISOString().slice(0, 10);
   } else if (!startDate) {
     startDate = '1900-01-01';
@@ -158,22 +157,27 @@ const locationHeatMap = async function(req, res) {
     endDate = today.toISOString().slice(0, 10);
   }
 
+  commonName = commonName ? commonName.trim().toLowerCase() : undefined;
+  scientificName = scientificName ? scientificName.trim().toLowerCase() : undefined;
+  subnational1Name = subnational1Name ? subnational1Name.trim().toLowerCase() : undefined;
+
   let query = `
     WITH 
       sightings_filtered AS (
         SELECT 
           location_id, 
+          species.species_code,
+          species.family_code,
           scientific_name,
           common_name,
           observation_count
         FROM
           observation
         JOIN species 
-          ON
-          observation.species_code = species.species_code
+          ON observation.species_code = species.species_code
         WHERE 
-          (${commonName ? `common_name = '${commonName}'` : '1 = 1'})
-          AND (${scientificName ? `scientific_name = '${scientificName}'` : '1 = 1'})
+          (${commonName ? `LOWER(common_name) LIKE '%${commonName}%'` : '1 = 1'})
+          AND (${scientificName ? `LOWER(scientific_name) LIKE '%${scientificName}%'` : '1 = 1'})
           AND (${startDate ? `CAST(observation_date AS DATE) >= '${startDate}'` : '1 = 1'})
           AND (${endDate ? `CAST(observation_date AS DATE) <= '${endDate}'` : '1 = 1'})
       ), 
@@ -189,10 +193,11 @@ const locationHeatMap = async function(req, res) {
         JOIN subnational1 S1
           ON S2.subnational1_code = S1.subnational1_code
         WHERE 
-          (${subnational1Name ? `S1.subnational1_name = '${subnational1Name}'` : '1 = 1'})
-          OR S2.subnational2_name = ''
+          ${subnational1Name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1Name}%'` : '1 = 1'}
       )
     SELECT 
+      species_code,
+      family_code,
       latitude,
       longitude,
       scientific_name,
