@@ -73,7 +73,7 @@ const birdOfTheDay = async function(_, res) {
 };
 
 /**
- * Route 4: GET /species/info
+ * Route 2: GET /species/info
  * Get details for a specific bird species.
  *
  * @param {Object} req - The request object
@@ -120,9 +120,71 @@ const speciesInfo = async function(req, res) {
   }
 )}
 
+// Route 3: GET /sightings/filtered
+// parameters: start_date, end_date, name, location
+const sightingsFiltered = async function(req, res) {
+
+};
+
+// Route 4: GET /sightings/recent
+// parameters: species_code
+const sightingsRecent = async function(req, res) {
+
+}
+
+// Route 5: GET /family/info
+// parameters: family_code
+const familyInfo = async function(req, res) {
+  connection.query(`
+  SELECT family.family_code,
+  family_scientific_name,
+  family_common_name,
+  family_description,
+  species_img_link
+  FROM   family
+    JOIN species
+      ON family.family_code = species.family_code
+  WHERE  family.family_code = '{page_family_code}'
+  ORDER  BY RAND ()
+  LIMIT  1; 
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      console.log(data);
+      res.json({
+        family_code: data[0].family.family_code
+      });
+    }
+  });
+}
+
+// Route 6: GET /family/species
+// parameters: family_code
+const familySpecies = async function(req, res) {
+  connection.query(`
+  SELECT common_name,
+  species_code
+    FROM   species
+    WHERE  family_code = '{page_family_code}'
+    ORDER  BY RAND();
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      console.log(data);
+      res.json({
+        family_code: data[0].family_code
+      });
+    }
+  });
+}
+
 /**
- * Route 2: POST /location/heatmap
- * Get a heatmap of bird sightings, filtered by time range, species, and location.
+ * Route 7: POST /heatmap
+ * Get a heatmap of bird sightings, filtered by time range, species and location.
  *
  * @param {Object} req - The request object. The request body can contain the following fields:
  *  - startDate {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
@@ -174,7 +236,7 @@ const speciesInfo = async function(req, res) {
  * //   ...
  * // ]
  */
-const locationHeatMap = async function(req, res) {
+const heatMap = async function(req, res) {
   let { startDate, endDate, commonName, scientificName, subnational1Name } = req.body;
 
   if (!startDate && !endDate) {
@@ -251,82 +313,12 @@ const locationHeatMap = async function(req, res) {
   });
 };
 
-
-// Route 3: GET /sightings/filtered
-// parameters: start_date, end_date, name, location
-const sightingsFiltered = async function(req, res) {
-
-};
-
-// Route 5: GET /sightings/recent
-// parameters: species_code
-const sightingsRecent = async function(req, res) {
-
-}
-
-// Route 6: GET /family/info
-// parameters: family_code
-const familyInfo = async function(req, res) {
-  connection.query(`
-  SELECT family.family_code,
-  family_scientific_name,
-  family_common_name,
-  family_description,
-  species_img_link
-  FROM   family
-    JOIN species
-      ON family.family_code = species.family_code
-  WHERE  family.family_code = '{page_family_code}'
-  ORDER  BY RAND ()
-  LIMIT  1; 
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({});
-    } else {
-      console.log(data);
-      res.json({
-        family_code: data[0].family.family_code
-      });
-    }
-  });
-}
-
-// Route 7: GET /family/species
-// parameters: family_code
-const familySpecies = async function(req, res) {
-  connection.query(`
-  SELECT common_name,
-  species_code
-    FROM   species
-    WHERE  family_code = '{page_family_code}'
-    ORDER  BY RAND();
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({});
-    } else {
-      console.log(data);
-      res.json({
-        family_code: data[0].family_code
-      });
-    }
-  });
-}
-
-// Route 8: GET /family/heat-map
-// parameters: start_date, end_date, family_code
-const familyHeatMap = async function(req, res) {
-
-}
-
 module.exports = {
-  familyHeatMap,
-  familySpecies,
-  familyInfo,
-  sightingsRecent,
-  sightingsFiltered,
-  locationHeatMap,
+  birdOfTheDay,
   speciesInfo,
-  birdOfTheDay
+  sightingsFiltered,
+  sightingsRecent,
+  familyInfo,
+  familySpecies,
+  heatMap
 }

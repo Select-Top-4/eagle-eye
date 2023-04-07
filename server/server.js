@@ -21,14 +21,13 @@ app.use(express.json());
   speciesInfo,
   birdOfTheDay
  */
-  app.get('/family/heat-map', routes.familyHeatMap);
   app.get('/family/species', routes.familySpecies);
   app.get('/family/info', routes.familyInfo);
   app.get('/sightings/recent', routes.sightingsRecent);
   app.get('/sightings/filtered', routes.sightingsFiltered);
-  app.post('/location/heat-map', routes.locationHeatMap);
   app.get('/species/info', routes.speciesInfo);
   app.get('/species/random', routes.birdOfTheDay);
+  app.post('/heatmap', routes.heatMap);
   
 app.listen(config.server_port, () => {
   console.log(`Server running at http://${config.server_host}:${config.server_port}/`)
