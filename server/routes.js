@@ -18,14 +18,15 @@ const connection = process.env.NODE_ENV === "production" ? mysql.createConnectio
 connection.connect((err) => err && console.log(err));
 
 /** 
- * @route GET /species/random
+ * @route GET /random/species
  * @description Get a randomly selected bird species with common name, scientific name, description, and image link.
  * @param {Object} req - The request object (unused).
  * @param {Object} res - The response object.
- * @returns {Object} The bird species object, including common name, scientific name, description, and image link.
+ * @returns {Object} The bird species object, including species code, family code, common name, scientific name, 
+ * species description, image link, whether it is extinct and the year of extinction.
  * @example
  * // Request:
- * // GET /species/random
+ * // GET /random/species
  * //
  * // Response:
  * // {
@@ -34,10 +35,12 @@ connection.connect((err) => err && console.log(err));
  * //   "common_name": "Capped Heron",
  * //   "scientific_name": "Pilherodius pileatus",
  * //   "species_description": "This species is very distinct from other herons, being the only one with a blue beak and face, and a black crown...",
- * //   "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Kappenreiher_Pilherodius_pileatus.jpg/220px-Kappenreiher_Pilherodius_pileatus.jpg"
+ * //   "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Kappenreiher_Pilherodius_pileatus.jpg/220px-Kappenreiher_Pilherodius_pileatus.jpg",
+ * //   "extinct": 0,
+ * //   "extinct_year": ""
  * // }
  */
-const birdOfTheDay = async function(_, res) {
+const getRandomSpecies = async function(_, res) {
   connection.query(`
     SELECT 
       species_code,
@@ -45,7 +48,9 @@ const birdOfTheDay = async function(_, res) {
       common_name,
       scientific_name,
       species_description,
-      species_img_link
+      species_img_link,
+      extinct,
+      extinct_year
     FROM   
       species
     WHERE  
@@ -70,16 +75,17 @@ const birdOfTheDay = async function(_, res) {
 };
 
 /**
- * @route GET /species/info
+ * @route GET /species/:species_code
  * @description Get details for a specific bird species.
  * @param {Object} req - The request object
- * @param {string} req.query.species_code - The species code for the bird species to get details for.
+ * @param {string} req.params.species_code - The species code for the bird species to get details for.
  * @param {Object} res - The response object
  * @returns {Object} The bird species details object, including species code, family code, common name, 
- * scientific name, description, image link, family common name, and family scientific name.
+ * scientific name, description, image link, whether it is extinct, the year of extinction,
+ * family common name, and family scientific name.
  * @example
  * // Request:
- * // GET /species/info?species_code=evegro
+ * // GET /species/evegro
  * //
  * // Response:
  * // {
@@ -89,11 +95,13 @@ const birdOfTheDay = async function(_, res) {
  * //   "scientific_name": "Coccothraustes vespertinus",
  * //   "species_description": "The genus Hesperiphona was introduced by Charles Lucien Bonaparte in 1850...",
  * //   "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Hesperiphona_vespertina_CT3.jpg/220px-Hesperiphona_vespertina_CT3.jpg",
+ * //   "extinct": 0,
+ * //   "extinct_year": "",
  * //   "family_common_name": "Finches, Euphonias, and Allies",
  * //   "family_scientific_name": "Fringillidae"
  * // }
  */
-const speciesInfo = async function(req, res) {
+const getOneSpecies = async function(req, res) {
   connection.query(`
     SELECT 
       species_code,
@@ -102,6 +110,8 @@ const speciesInfo = async function(req, res) {
       species.scientific_name,
       species.species_description,
       species.species_img_link,
+      species.extinct,
+      species.extinct_year,
       family.family_common_name,
       family.family_scientific_name
     FROM 
@@ -109,7 +119,7 @@ const speciesInfo = async function(req, res) {
     JOIN family
       ON species.family_code = family.family_code
     WHERE 
-      species_code = '${req.query.species_code}';
+      species_code = '${req.params.species_code}';
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -133,10 +143,9 @@ const sightingsRecent = async function(req, res) {
 }
 
 /**
- * @route GET /family/info
+ * @route GET /family/:family_code
  * @description Get information about a bird family by its family code.
- * @param {Object} req - The request object. The query parameters should include the following field:
- *                     - family_code {string} The family code of the bird family.
+ * @param {Object} req.params.family_code The family code of the bird family.
  * @param {Object} res - The response object
  * @returns {Object} An object containing information about the bird family, including the following fields:
  *  - family_code {string} The family code of the bird family.
@@ -146,7 +155,7 @@ const sightingsRecent = async function(req, res) {
  *  - random_family_img_link {string} A link to an image of a random species from the bird family.
  * @example
  * // Request:
- * // GET /family/info?family_code=accipi1
+ * // GET /family/accipi1
  * //
  * // Response:
  * // {
@@ -157,7 +166,7 @@ const sightingsRecent = async function(req, res) {
  * //   "random_family_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/af/Streaked_Rosefinch.jpg/220px-Streaked_Rosefinch.jpg"
  * // }
  */
-const familyInfo = async function(req, res) {
+const getOneFamily = async function(req, res) {
   connection.query(`
     SELECT 
       family.family_code,
@@ -170,7 +179,7 @@ const familyInfo = async function(req, res) {
     JOIN species
       ON family.family_code = species.family_code
     WHERE 
-      family.family_code = '${req.query.family_code}'
+      family.family_code = '${req.params.family_code}'
     ORDER BY RAND()
     LIMIT 1; 
   `, (err, data) => {
@@ -183,31 +192,58 @@ const familyInfo = async function(req, res) {
   });
 }
 
-// Route 6: GET /family/species
-// parameters: family_code
-const familySpecies = async function(req, res) {
+/**
+ * @route GET /species/families/:family_code
+ * @description Get all species for a given family code.
+ * @param {Object} req.params.family_code The family code of the bird family.
+ * @param {Object} res - The response object.
+ * @returns {Object} An array of objects, each representing a species with the following fields:
+ *  - species_code {string} The code of the species.
+ *  - common_name {string} The common name of the species.
+ *  - scientific_name {string} The scientific name of the species.
+ * @example
+ * // Request:
+ * // GET /family/fringi1/species
+ * //
+ * // Response:
+ * // [
+ * //   {
+ * //     "species_code": "comcha2",
+ * //     "common_name": "Common Chaffinch (Tunisian)",
+ * //     "scientific_name": "Fringilla coelebs spodiogenys"
+ * //   },
+ * //   {
+ * //     "species_code": "eurgol1",
+ * //     "common_name": "European Goldfinch (European)",
+ * //     "scientific_name": "Carduelis carduelis [carduelis Group]"
+ * //   },
+ * //   ...
+ * // ]
+ */
+const getAllSpeciesByFamilyCode = async function(req, res) {
   connection.query(`
-    SELECT common_name,
-    species_code
-      FROM   species
-      WHERE  family_code = '{page_family_code}'
-      ORDER  BY RAND();
+    SELECT
+      species_code,
+      common_name,
+      scientific_name
+    FROM 
+      species
+    WHERE 
+      family_code = '${req.params.family_code}'
+    ORDER BY RAND();
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
-      res.json({});
+      res.json([]); 
     } else {
-      console.log(data);
-      res.json({
-        family_code: data[0].family_code
-      });
+      res.json(data);
     }
   });
 }
 
 /**
- * Route 7: POST /heatmap
- * Get a heatmap of bird sightings, filtered by time range, species, family and location.
+ * Route 7: POST /heatmap-observations
+ * Search a heatmap of bird sightings, filtered by time range, species, family and location.
  *
  * @param {Object} req - The request object. The request body can contain the following fields:
  *  - startDate {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
@@ -233,7 +269,7 @@ const familySpecies = async function(req, res) {
  *  - total_count {number} The total count of observations for this species at this location.
  * @example
  * // Request:
- * // POST /heatmap
+ * // POST /heatmap-obserations
  * // Request Body:
  * // {
  * //     "startDate": "2023-03-03",
@@ -260,7 +296,7 @@ const familySpecies = async function(req, res) {
  * //   ...
  * // ]
  */
-const heatMap = async function(req, res) {
+const searchHeatMapObservations = async function(req, res) {
   let { startDate, 
         endDate, 
         commonName, 
@@ -355,22 +391,22 @@ const heatMap = async function(req, res) {
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11;
   `;
 
-  connection.query(query, (err, results) => {
+  connection.query(query, (err, data) => {
     if (err) {
       console.log(err);
       res.json([]);
     } else {
-      res.json(results);
+      res.json(data);
     }
   });
 };
 
 module.exports = {
-  birdOfTheDay,
-  speciesInfo,
+  getRandomSpecies,
+  getOneSpecies,
   sightingsFiltered,
   sightingsRecent,
-  familyInfo,
-  familySpecies,
-  heatMap
+  getOneFamily,
+  getAllSpeciesByFamilyCode,
+  searchHeatMapObservations
 }

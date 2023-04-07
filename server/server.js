@@ -9,25 +9,13 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// We use express to define our various API endpoints and
-// provide their handlers that we implemented in routes.js
-/**
- * familyHeatMap,
-  familySpecies,
-  familyInfo,
-  sightingsRecent,
-  sightingsFiltered,
-  locationHeatMap,
-  speciesInfo,
-  birdOfTheDay
- */
-  app.get('/family/species', routes.familySpecies);
-  app.get('/family/info', routes.familyInfo);
-  app.get('/sightings/recent', routes.sightingsRecent);
-  app.get('/sightings/filtered', routes.sightingsFiltered);
-  app.get('/species/info', routes.speciesInfo);
-  app.get('/species/random', routes.birdOfTheDay);
-  app.post('/heatmap', routes.heatMap);
+app.get('/random/species', routes.getRandomSpecies);
+app.get('/species/:species_code', routes.getOneSpecies);
+app.get('/sightings/filtered', routes.sightingsFiltered);
+app.get('/sightings/recent', routes.sightingsRecent);
+app.get('/family/:family_code', routes.getOneFamily);
+app.get('/family/:family_code/species', routes.getAllSpeciesByFamilyCode);
+app.post('/heatmap-observations', routes.searchHeatMapObservations);
   
 app.listen(config.server_port, () => {
   console.log(`Server running at http://${config.server_host}:${config.server_port}/`)
