@@ -13,15 +13,10 @@ import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   const [birdOfTheDay, setBirdOfTheDay] = useState();
-  const [selectedBird, setSelectedBird] = useState(null);
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/species/random`)
+    fetch(`http://${config.server_host}:${config.server_port}/random/species`)
       .then(res => res.json())
-      .then(
-        resJson => {
-          setBirdOfTheDay(resJson)
-          })
-      .then(console.log(birdOfTheDay))
+      .then(resJson => setBirdOfTheDay(resJson))
       .catch(error => console.log(error));
   }, []);
 
@@ -43,10 +38,8 @@ export default function HomePage() {
   //     {/* <LazyTable route={`http://${config.server_host}:${config.server_port}/top_albums`} columns={albumColumns} defaultPageSize={5} rowsPerPageOptions={[5,10]}/> */}
   //     <Divider />
   //     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    
-      
-
   //   </Container>
+  
   <Container>
     <Box m={2} pt={3}>
     <Card
@@ -82,8 +75,5 @@ export default function HomePage() {
 
   {/* <Divider />  */}
   </Container>
-  
   );
-
-
 };

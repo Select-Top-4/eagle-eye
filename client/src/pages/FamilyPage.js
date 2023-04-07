@@ -12,41 +12,38 @@ import { Link } from 'react-router-dom';
 
 
 export default function FamilyPage(family_code) {
-    const [familyInfo, setFamilyInfo] = useState({});
-    const [familySpecies, setFamilySpecies] = useState({});
-    useEffect(() => {
-      fetch(`http://${config.server_host}:${config.server_port}/family/info?family_code=${family_code}`)
+  const [familyInfo, setFamilyInfo] = useState({});
+  const [familySpecies, setFamilySpecies] = useState({});
+  useEffect(() => {
+    fetch(`http://${config.server_host}:${config.server_port}/family/${family_code}`)
       .then(res => res.json())
       .then(resJson => setFamilyInfo(resJson))
       .catch(error => console.log(error));
-    }, []);
-    useEffect(() => {
-      fetch(`http://${config.server_host}:${config.server_port}/family/species?family_code=${family_code}`)
+  }, []);
+  useEffect(() => {
+    fetch(`http://${config.server_host}:${config.server_port}/family/${family_code}/species`)
       .then(res => res.json())
       .then(resJson => {
         setFamilySpecies(resJson)
       })
       .catch(error => console.log(error));
-    }, []);
+  }, []);
 
-    if (!familyInfo) {
-        return <div>Loading...</div>;
-    }
-    
-    return (
+  if (!familyInfo || !familySpecies) {
+    return <div>Loading...</div>;
+  }
+
+  return (
     <Container>
       <Box m={2} pt={3}>
+        Family Page!
+        <Button component={Link} to="/" variant="outlined" size="large">Home</Button>
+      </Box>
 
-      Family Page!
-        <Button component={Link} to="/" variant = "outlined" size="large">Home</Button>
-     
-
-    </Box>
-  
-    {/* <Divider />  */}
+      {/* <Divider />  */}
     </Container>
-    
-    );
-  
-  
-  };
+
+  );
+
+
+};
