@@ -17,27 +17,24 @@ const connection = process.env.NODE_ENV === "production" ? mysql.createConnectio
 
 connection.connect((err) => err && console.log(err));
 
-/**
- * Route 1: GET /species/random
- * Get a randomly selected bird species with common name, scientific name, description, and image link.
- *
+/** 
+ * @route GET /species/random
+ * @description Get a randomly selected bird species with common name, scientific name, description, and image link.
  * @param {Object} req - The request object (unused).
  * @param {Object} res - The response object.
- *
  * @returns {Object} The bird species object, including common name, scientific name, description, and image link.
- *
  * @example
  * // Request:
  * // GET /species/random
  * //
  * // Response:
  * // {
- * //   "species_code": "amecro",
- * //   "family_code": "tur",
- * //   "common_name": "American Crow",
- * //   "scientific_name": "Corvus brachyrhynchos",
- * //   "species_description": "The American Crow is a large passerine bird...",
- * //   "species_img_link": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Corvus_brachyrhynchos_01.jpg/640px-Corvus_brachyrhynchos_01.jpg"
+ * //   "species_code": "capher1",
+ * //   "family_code": "ardeid1",
+ * //   "common_name": "Capped Heron",
+ * //   "scientific_name": "Pilherodius pileatus",
+ * //   "species_description": "This species is very distinct from other herons, being the only one with a blue beak and face, and a black crown...",
+ * //   "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Kappenreiher_Pilherodius_pileatus.jpg/220px-Kappenreiher_Pilherodius_pileatus.jpg"
  * // }
  */
 const birdOfTheDay = async function(_, res) {
@@ -73,24 +70,24 @@ const birdOfTheDay = async function(_, res) {
 };
 
 /**
- * Route 2: GET /species/info
- * Get details for a specific bird species.
- *
+ * @route GET /species/info
+ * @description Get details for a specific bird species.
  * @param {Object} req - The request object
  * @param {string} req.query.species_code - The species code for the bird species to get details for.
  * @param {Object} res - The response object
- *
- * @returns {Object} The bird species details object, including common name, scientific name, description, image link, family common name, and family scientific name.
- *
+ * @returns {Object} The bird species details object, including species code, family code, common name, 
+ * scientific name, description, image link, family common name, and family scientific name.
  * @example
  * // Request:
  * // GET /species/info?species_code=evegro
  * //
  * // Response:
  * // {
+ * //   "species_code": "evegro",
+ * //   "family_code": "fringi1",
  * //   "common_name": "Evening Grosbeak",
  * //   "scientific_name": "Coccothraustes vespertinus",
- * //   "species_description": "The genus Hesperiphona was introduced by Charles Lucien Bonaparte in 1850.[6] The name is from Ancient Greek hesperos, \"evening\", and phone \"cry\", and the specific vespertina is Latin for \"evening\".[7]",
+ * //   "species_description": "The genus Hesperiphona was introduced by Charles Lucien Bonaparte in 1850...",
  * //   "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Hesperiphona_vespertina_CT3.jpg/220px-Hesperiphona_vespertina_CT3.jpg",
  * //   "family_common_name": "Finches, Euphonias, and Allies",
  * //   "family_scientific_name": "Fringillidae"
@@ -99,6 +96,8 @@ const birdOfTheDay = async function(_, res) {
 const speciesInfo = async function(req, res) {
   connection.query(`
     SELECT 
+      species_code,
+      species.family_code,
       species.common_name,
       species.scientific_name,
       species.species_description,
@@ -133,8 +132,31 @@ const sightingsRecent = async function(req, res) {
 
 }
 
-// Route 5: GET /family/info
-// parameters: family_code
+/**
+ * @route GET /family/info
+ * @description Get information about a bird family by its family code.
+ * @param {Object} req - The request object. The query parameters should include the following field:
+ *                     - family_code {string} The family code of the bird family.
+ * @param {Object} res - The response object
+ * @returns {Object} An object containing information about the bird family, including the following fields:
+ *  - family_code {string} The family code of the bird family.
+ *  - family_scientific_name {string} The scientific name of the bird family.
+ *  - family_common_name {string} The common name of the bird family.
+ *  - family_description {string} A description of the bird family.
+ *  - random_family_img_link {string} A link to an image of a random species from the bird family.
+ * @example
+ * // Request:
+ * // GET /family/info?family_code=accipi1
+ * //
+ * // Response:
+ * // {
+ * //   "family_code": "fringi1",
+ * //   "family_scientific_name": "Fringillidae",
+ * //   "family_common_name": "Finches, Euphonias, and Allies",
+ * //   "family_description": "Beginning around 1990 a series of phylogenetic studies based on mitochondrial and nuclear DNA sequences...",
+ * //   "random_family_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/af/Streaked_Rosefinch.jpg/220px-Streaked_Rosefinch.jpg"
+ * // }
+ */
 const familyInfo = async function(req, res) {
   connection.query(`
     SELECT 
