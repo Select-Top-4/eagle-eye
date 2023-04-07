@@ -109,7 +109,8 @@ const speciesInfo = async function(req, res) {
       species  
     JOIN family
       ON species.family_code = family.family_code
-    WHERE species_code = '${req.query.species_code}';
+    WHERE 
+      species_code = '${req.query.species_code}';
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -136,26 +137,26 @@ const sightingsRecent = async function(req, res) {
 // parameters: family_code
 const familyInfo = async function(req, res) {
   connection.query(`
-  SELECT family.family_code,
-  family_scientific_name,
-  family_common_name,
-  family_description,
-  species_img_link
-  FROM   family
+    SELECT 
+      family.family_code,
+      family_scientific_name,
+      family_common_name,
+      family_description,
+      species_img_link AS random_family_img_link
+    FROM 
+      family
     JOIN species
       ON family.family_code = species.family_code
-  WHERE  family.family_code = '{page_family_code}'
-  ORDER  BY RAND ()
-  LIMIT  1; 
+    WHERE 
+      family.family_code = '${req.query.family_code}'
+    ORDER BY RAND()
+    LIMIT 1; 
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
-      res.json({});
+      res.json({}); 
     } else {
-      console.log(data);
-      res.json({
-        family_code: data[0].family.family_code
-      });
+      res.json(data[0]);
     }
   });
 }
@@ -164,11 +165,11 @@ const familyInfo = async function(req, res) {
 // parameters: family_code
 const familySpecies = async function(req, res) {
   connection.query(`
-  SELECT common_name,
-  species_code
-    FROM   species
-    WHERE  family_code = '{page_family_code}'
-    ORDER  BY RAND();
+    SELECT common_name,
+    species_code
+      FROM   species
+      WHERE  family_code = '{page_family_code}'
+      ORDER  BY RAND();
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
