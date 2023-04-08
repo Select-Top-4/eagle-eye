@@ -250,15 +250,15 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
 }
 
 /**
- * @route POST /specific-observations/:species_code
+ * @route GET /specific-observations/:species_code
  * @description Search observations for a specific bird species, filtered by time range, user, and location.
- * @param {Object} req - The request object. The request body can contain the following fields:
- *  - startDate {string} The start date for filtering observations. If not provided, defaults to '2022-12-01'.
- *  - endDate {string} The end date for filtering observations. If not provided, defaults to today's date.
- *  - userName {string} The name of the user who made the observation.
- *  - subnational1Name {string} The name of the subnational1 location of the observation.
- *  - subnational2Name {string} The name of the subnational2 location of the observation.
- *  - locationName {string} The name of the location of the observation.
+ * @param {Object} req - The request object. The request query can contain the following fields:
+ *  - start_date {string} The start date for filtering observations. If not provided, defaults to '2022-12-01'.
+ *  - end_date {string} The end date for filtering observations. If not provided, defaults to today's date.
+ *  - user_name {string} The name of the user who made the observation.
+ *  - subnational1_name {string} The name of the subnational1 location of the observation.
+ *  - subnational2_name {string} The name of the subnational2 location of the observation.
+ *  - location_name {string} The name of the location of the observation.
  * @param {Object} res - The response object.
  * @returns {Object[]} An array of objects, each representing a bird observation, including the following fields:
  *  - location_id {string} The location ID of the observation.
@@ -271,14 +271,7 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
  *  - total_count {number} The total count of the observed bird species at this location.
  * @example
  * // Request:
- * // POST /species/reshaw/observations
- * // Request Body: 
- * // {
- * //   "userName": "rick",
- * //   "subnational1Name": "alabama",
- * //   "subnational2Name": "lim",
- * //   "locationName": "Rd"
- * // }
+ * // GET /species/reshaw/observations?user_name=rick&subnational1_name=alabama&subnational2_name=lim&location_name=Rd
  * //
  * // Response:
  * // [
@@ -295,28 +288,28 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
  * // ]
  */
 const searchSpecificObservationsBySpeciesCode = async function(req, res) {
-  let { startDate, 
-        endDate, 
-        userName, 
-        subnational1Name, 
-        subnational2Name,
-        locationName} = req.body;
+  let { start_date, 
+        end_date, 
+        user_name, 
+        subnational1_name, 
+        subnational2_name,
+        location_name} = req.query;
 
-  if (!startDate && !endDate) {
+  if (!start_date && !end_date) {
     const today = new Date();
-    startDate = '2022-12-01';
-    endDate = today.toISOString().slice(0, 10);
-  } else if (!startDate) {
-    startDate = '2022-12-01';
-  } else if (!endDate) {
+    start_date = '2022-12-01';
+    end_date = today.toISOString().slice(0, 10);
+  } else if (!start_date) {
+    start_date = '2022-12-01';
+  } else if (!end_date) {
     const today = new Date();
-    endDate = today.toISOString().slice(0, 10);
+    end_date = today.toISOString().slice(0, 10);
   }
 
-  userName = userName ? userName.trim().toLowerCase() : undefined;
-  subnational1Name = subnational1Name ? subnational1Name.trim().toLowerCase() : undefined;
-  subnational2Name = subnational2Name ? subnational2Name.trim().toLowerCase() : undefined;
-  locationName = locationName ? locationName.trim().toLowerCase() : undefined;
+  user_name = user_name ? user_name.trim().toLowerCase() : undefined;
+  subnational1_name = subnational1_name ? subnational1_name.trim().toLowerCase() : undefined;
+  subnational2_name = subnational2_name ? subnational2_name.trim().toLowerCase() : undefined;
+  location_name = location_name ? location_name.trim().toLowerCase() : undefined;
 
   let query = `
     SELECT 
@@ -344,12 +337,12 @@ const searchSpecificObservationsBySpeciesCode = async function(req, res) {
       ON S2.subnational1_code = S1.subnational1_code
     WHERE
       O.species_code = '${req.params.species_code}'
-      AND ${userName ? `LOWER(CONCAT(first_name, ' ', last_name)) LIKE '%${userName}%'` : '1 = 1'}
-      AND ${subnational1Name ? `LOWER(subnational1_name) LIKE '%${subnational1Name}%'` : '1 = 1'}
-      AND ${subnational2Name ? `LOWER(subnational2_name) LIKE '%${subnational2Name}%'` : '1 = 1'}
-      AND ${locationName? `LOWER(location_name) LIKE '%${locationName}%'` : '1 = 1'}
-      AND ${startDate ? `CAST(observation_date AS DATE) >= '${startDate}'` : '1 = 1'}
-      AND ${endDate ? `CAST(observation_date AS DATE) <= '${endDate}'` : '1 = 1'}
+      AND ${user_name ? `LOWER(CONCAT(first_name, ' ', last_name)) LIKE '%${user_name}%'` : '1 = 1'}
+      AND ${subnational1_name ? `LOWER(subnational1_name) LIKE '%${subnational1_name}%'` : '1 = 1'}
+      AND ${subnational2_name ? `LOWER(subnational2_name) LIKE '%${subnational2_name}%'` : '1 = 1'}
+      AND ${location_name? `LOWER(location_name) LIKE '%${location_name}%'` : '1 = 1'}
+      AND ${start_date ? `CAST(observation_date AS DATE) >= '${start_date}'` : '1 = 1'}
+      AND ${end_date ? `CAST(observation_date AS DATE) <= '${end_date}'` : '1 = 1'}
     GROUP BY 1, 2, 3, 4, 5, 6, 7;
   `;
 
@@ -570,16 +563,16 @@ const getLocationByID = async function(req, res) {
 };
 
 /**
- * @route POST /heatmap-observations
+ * @route GET /heatmap-observations
  * @description Search a heatmap of bird sightings, filtered by time range, species, family and location.
- * @param {Object} req - The request object. The request body can contain the following fields:
- *  - startDate {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
- *  - endDate {string} The end date for filtering sightings. If not provided, defaults to today's date.
- *  - commonName {string} The common name of the species to filter by. If not provided, defaults to all species.
- *  - scientificName {string} The scientific name of the species to filter by. If not provided, defaults to all species.
- *  - familyCommonName {string} The common name of the bird family to filter by. If not provided, defaults to all families.
- *  - familyScientificName {string} The scientific name of the bird family to filter by. If not provided, defaults to all families.
- *  - subnational1Name {string} The name of the subnational1 location to filter by. If not provided, defaults to all locations.
+ * @param {Object} req - The request object. The request query can contain the following fields:
+ *  - start_date {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
+ *  - end_date {string} The end date for filtering sightings. If not provided, defaults to today's date.
+ *  - common_name {string} The common name of the species to filter by. If not provided, defaults to all species.
+ *  - scientific_name {string} The scientific name of the species to filter by. If not provided, defaults to all species.
+ *  - family_common_name {string} The common name of the bird family to filter by. If not provided, defaults to all families.
+ *  - family_scientific_name {string} The scientific name of the bird family to filter by. If not provided, defaults to all families.
+ *  - subnational1_name {string} The name of the subnational1 location to filter by. If not provided, defaults to all locations.
  * @param {Object} res - The response object
  * @returns {Object[]} An array of objects, each representing a location with species sightings, including the following fields:
  *  - species_code {string} The species code of the observed bird.
@@ -596,13 +589,7 @@ const getLocationByID = async function(req, res) {
  *  - total_count {number} The total count of observations for this species at this location.
  * @example
  * // Request:
- * // POST /heatmap-obserations
- * // Request Body:
- * // {
- * //     "startDate": "2023-03-03",
- * //     "commonName": "hawk",
- * //     "familyCommonName": "Eagles"
- * // }
+ * // GET /heatmap-observations?start_date=2023-03-03&common_name=hawk&family_common_name=Eagles
  * //
  * // Response:
  * // [
@@ -624,30 +611,30 @@ const getLocationByID = async function(req, res) {
  * // ]
  */
 const searchHeatMapObservations = async function(req, res) {
-  let { startDate, 
-        endDate, 
-        commonName, 
-        scientificName, 
-        familyCommonName, 
-        familyScientificName, 
-        subnational1Name } = req.body;
+  let { start_date, 
+        end_date, 
+        common_name, 
+        scientific_name, 
+        family_common_name, 
+        family_scientific_name, 
+        subnational1_name } = req.query;
 
-  if (!startDate && !endDate) {
+  if (!start_date && !end_date) {
     const today = new Date();
-    startDate = '2022-12-01';
-    endDate = today.toISOString().slice(0, 10);
-  } else if (!startDate) {
-    startDate = '2022-12-01';
-  } else if (!endDate) {
+    start_date = '2022-12-01';
+    end_date = today.toISOString().slice(0, 10);
+  } else if (!start_date) {
+    start_date = '2022-12-01';
+  } else if (!end_date) {
     const today = new Date();
-    endDate = today.toISOString().slice(0, 10);
+    end_date = today.toISOString().slice(0, 10);
   }
 
-  commonName = commonName ? commonName.trim().toLowerCase() : undefined;
-  scientificName = scientificName ? scientificName.trim().toLowerCase() : undefined;
-  familyCommonName = familyCommonName ? familyCommonName.trim().toLowerCase() : undefined;
-  familyScientificName = familyScientificName ? familyScientificName.trim().toLowerCase() : undefined;
-  subnational1Name = subnational1Name ? subnational1Name.trim().toLowerCase() : undefined;
+  common_name = common_name ? common_name.trim().toLowerCase() : undefined;
+  scientific_name = scientific_name ? scientific_name.trim().toLowerCase() : undefined;
+  family_common_name = family_common_name ? family_common_name.trim().toLowerCase() : undefined;
+  family_scientific_name = family_scientific_name ? family_scientific_name.trim().toLowerCase() : undefined;
+  subnational1_name = subnational1_name ? subnational1_name.trim().toLowerCase() : undefined;
 
   let query = `
     WITH 
@@ -664,10 +651,10 @@ const searchHeatMapObservations = async function(req, res) {
         JOIN species 
           ON observation.species_code = species.species_code
         WHERE 
-          ${commonName ? `LOWER(common_name) LIKE '%${commonName}%'` : '1 = 1'}
-          AND ${scientificName ? `LOWER(scientific_name) LIKE '%${scientificName}%'` : '1 = 1'}
-          AND ${startDate ? `CAST(observation_date AS DATE) >= '${startDate}'` : '1 = 1'}
-          AND ${endDate ? `CAST(observation_date AS DATE) <= '${endDate}'` : '1 = 1'}
+          ${common_name ? `LOWER(common_name) LIKE '%${common_name}%'` : '1 = 1'}
+          AND ${scientific_name ? `LOWER(scientific_name) LIKE '%${scientific_name}%'` : '1 = 1'}
+          AND ${start_date ? `CAST(observation_date AS DATE) >= '${start_date}'` : '1 = 1'}
+          AND ${end_date ? `CAST(observation_date AS DATE) <= '${end_date}'` : '1 = 1'}
       ), 
       locations_filtered AS (
         SELECT 
@@ -683,7 +670,7 @@ const searchHeatMapObservations = async function(req, res) {
         JOIN subnational1 S1
           ON S2.subnational1_code = S1.subnational1_code
         WHERE 
-          ${subnational1Name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1Name}%'` : '1 = 1'}
+          ${subnational1_name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1_name}%'` : '1 = 1'}
       ),
       families_filtered AS (
         SELECT
@@ -693,8 +680,8 @@ const searchHeatMapObservations = async function(req, res) {
         FROM
           family
         WHERE
-          ${familyCommonName ? `LOWER(family_common_name) LIKE '%${familyCommonName}%'` : '1 = 1'}
-          AND ${familyScientificName ? `LOWER(family_scientific_name) LIKE '%${familyScientificName}%'` : '1 = 1'}
+          ${family_common_name ? `LOWER(family_common_name) LIKE '%${family_common_name}%'` : '1 = 1'}
+          AND ${family_scientific_name ? `LOWER(family_scientific_name) LIKE '%${family_scientific_name}%'` : '1 = 1'}
       )
     SELECT 
       species_code,
