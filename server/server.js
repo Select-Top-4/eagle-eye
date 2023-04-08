@@ -19,6 +19,7 @@ app.get('/family/:family_code', routes.getOneFamily);
 app.get('/family/:family_code/species', routes.getAllSpeciesByFamilyCode);
 app.get('/location/:location_id', routes.getLocationByID);
 app.get('/heatmap-observations', routes.searchHeatMapObservations);
+app.get('/heatmap-observations/species-ranking', routes.getSpeciesRankingByHeatMapObservations);
   
 app.listen(config.server_port, () => {
   console.log(`Server running at http://${config.server_host}:${config.server_port}/`)

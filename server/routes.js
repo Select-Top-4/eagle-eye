@@ -715,6 +715,117 @@ const searchHeatMapObservations = async function(req, res) {
   });
 };
 
+// Last Route
+const getSpeciesRankingByHeatMapObservations = async function(req, res) {
+  let { start_date, 
+        end_date, 
+        common_name, 
+        scientific_name, 
+        family_common_name, 
+        family_scientific_name, 
+        subnational1_name,
+        page = 1,
+        limit = 5 } = req.query;
+
+  if (!start_date && !end_date) {
+    const today = new Date();
+    start_date = '2022-12-01';
+    end_date = today.toISOString().slice(0, 10);
+  } else if (!start_date) {
+    start_date = '2022-12-01';
+  } else if (!end_date) {
+    const today = new Date();
+    end_date = today.toISOString().slice(0, 10);
+  }
+
+  common_name = common_name ? common_name.trim().toLowerCase() : undefined;
+  scientific_name = scientific_name ? scientific_name.trim().toLowerCase() : undefined;
+  family_common_name = family_common_name ? family_common_name.trim().toLowerCase() : undefined;
+  family_scientific_name = family_scientific_name ? family_scientific_name.trim().toLowerCase() : undefined;
+  subnational1_name = subnational1_name ? subnational1_name.trim().toLowerCase() : undefined;
+
+  const offset = (page - 1) * limit;
+
+  let query = `
+    WITH 
+      sightings_filtered AS (
+        SELECT 
+          location_id, 
+          species.species_code,
+          species.species_img_link,
+          species.species_description,
+          species.family_code,
+          scientific_name,
+          common_name,
+          observation_count
+        FROM
+          observation
+        JOIN species 
+          ON observation.species_code = species.species_code
+        WHERE 
+          ${common_name ? `LOWER(common_name) LIKE '%${common_name}%'` : '1 = 1'}
+          AND ${scientific_name ? `LOWER(scientific_name) LIKE '%${scientific_name}%'` : '1 = 1'}
+          AND ${start_date ? `CAST(observation_date AS DATE) >= '${start_date}'` : '1 = 1'}
+          AND ${end_date ? `CAST(observation_date AS DATE) <= '${end_date}'` : '1 = 1'}
+      ), 
+      locations_filtered AS (
+        SELECT 
+          location_id,
+          latitude,
+          longitude,
+          subnational1_name,
+          subnational2_name
+        FROM 
+          ebird_location E
+        JOIN subnational2 S2
+          ON E.subnational2_code = S2.subnational2_code
+        JOIN subnational1 S1
+          ON S2.subnational1_code = S1.subnational1_code
+        WHERE 
+          ${subnational1_name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1_name}%'` : '1 = 1'}
+      ),
+      families_filtered AS (
+        SELECT
+          family_code,
+          family_common_name,
+          family_scientific_name
+        FROM
+          family
+        WHERE
+          ${family_common_name ? `LOWER(family_common_name) LIKE '%${family_common_name}%'` : '1 = 1'}
+          AND ${family_scientific_name ? `LOWER(family_scientific_name) LIKE '%${family_scientific_name}%'` : '1 = 1'}
+      )
+    SELECT 
+      species_code,
+      common_name,
+      scientific_name,
+      species_img_link,
+      species_description,
+      S.family_code,
+      family_common_name,
+      family_scientific_name,
+      SUM(observation_count) AS total_count
+    FROM 
+      sightings_filtered S
+    JOIN families_filtered F
+      ON S.family_code = F.family_code
+    JOIN locations_filtered L
+      ON S.location_id = L.location_id
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+    ORDER BY 9 DESC
+    LIMIT ?, ?;
+  `;
+
+  connection.query(query, [offset, parseInt(limit)], (err, data) => {
+    if (err) {
+      console.log(err);
+      res.json([]);
+    } else {
+      res.json(data);
+    }
+  });
+};
+
 module.exports = {
   getRandomSpecies,
   getAllSpecies,
@@ -725,5 +836,6 @@ module.exports = {
   getOneFamily,
   getAllSpeciesByFamilyCode,
   getLocationByID,
-  searchHeatMapObservations
+  searchHeatMapObservations,
+  getSpeciesRankingByHeatMapObservations
 }
