@@ -10,6 +10,7 @@ app.use(cors({
 app.use(express.json());
 
 app.get('/random/species', routes.getRandomSpecies);
+app.get('/all-species', routes.getAllSpecies);
 app.get('/species/:species_code', routes.getOneSpecies);
 app.post('/sightings/filtered', routes.sightingsFiltered);
 app.get('/species/:species_code/5-latest-observations', routes.get5LatestObservationsBySpeciesCode);

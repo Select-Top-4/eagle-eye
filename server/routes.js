@@ -74,6 +74,47 @@ const getRandomSpecies = async function(_, res) {
   });
 };
 
+// get all species with pagination
+const getAllSpecies = async function(req, res) {
+  const { page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
+  
+  connection.query(`
+    SELECT 
+      species_code,
+      species.family_code,
+      species.common_name,
+      species.scientific_name,
+      species.species_description,
+      species.species_img_link,
+      species.extinct,
+      species.extinct_year,
+      family.family_common_name,
+      family.family_scientific_name
+    FROM 
+      species  
+    JOIN family
+      ON species.family_code = family.family_code
+    WHERE 
+      common_name IS NOT NULL
+      AND scientific_name IS NOT NULL
+      AND TRIM(species_description) != ""
+      AND species_description IS NOT NULL
+      AND species_description != "No description"
+      AND TRIM(species_img_link) != ""
+      AND species_img_link IS NOT NULL
+      AND species_img_link != "No image src"
+    LIMIT ?, ?;
+  `, [offset, parseInt(limit)], (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json([]); 
+    } else {
+      res.json(data);
+    }
+  });
+};
+
 /**
  * @route GET /species/:species_code
  * @description Get details for a specific bird species.
@@ -595,6 +636,7 @@ const searchHeatMapObservations = async function(req, res) {
 
 module.exports = {
   getRandomSpecies,
+  getAllSpecies,
   getOneSpecies,
   sightingsFiltered,
   get5LatestObservationsBySpeciesCode,
