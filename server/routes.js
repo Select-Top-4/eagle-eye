@@ -142,23 +142,24 @@ const sightingsFiltered = async function(req, res) {
  * @param {Object} req - The request object 
  * @param {string} req.params.species_code - The species code of the bird species.
  * @param {Object} res - The response object
- * @returns {Object} The recent sightings object, including count of birds observed, the bird watcher's first name,
+ * @returns {Object[]} An array of at most 5 recent sightings object, including count of birds observed, the bird watcher's first name,
  * and the location name for the observation
  * @example
  * //Request:
  * // GET /sightings/recent/bkcchi
  * // 
  * // Response: 
- * // {"observation_count":1,
- * // "first_name":"Caitlin",
- * // "location_name":"2646 Georgetowne Dr NW, Rochester US-MN 44.07798, -92.50146"
- * // }
- *  
- * 
+ * // [
+ * //   {"observation_count":1,
+ * //   "first_name":"Anonymous",
+ * //   "location_name":"Green Hills County Park, Raleigh US-NC (35.9113,-78.5758)"
+ * //   },
+ * //   ...
+ * // ]  
  */
 
 const sightingsRecent = async function(req, res) {
-  connection.query(`
+  let query = `
     SELECT 
       observation_count,
       ebird_user.first_name,
@@ -174,15 +175,17 @@ const sightingsRecent = async function(req, res) {
     ORDER BY 
       observation_date DESC
     LIMIT 5;
-  `, (err, data) => {
-    if (err || data.length === 0) {
+  `;
+  
+  connection.query(query, (err, data) => {
+    if (err) {
       console.log(err);
-      res.json({}); 
+      res.json([]);
     } else {
-      res.json(data[0]);
+      res.json(data);
     }
-  }
-)}
+  });
+}
 
 /**
  * @route GET /family/:family_code
