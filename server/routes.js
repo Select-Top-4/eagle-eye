@@ -249,8 +249,51 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
   });
 }
 
-// search specific observations of a species by start date and end date, user, subnational1 name (clickable),
-// subnational2 name, location.
+/**
+ * @route POST /specific-observations/:species_code
+ * @description Search observations for a specific bird species, filtered by time range, user, and location.
+ * @param {Object} req - The request object. The request body can contain the following fields:
+ *  - startDate {string} The start date for filtering observations. If not provided, defaults to '2022-12-01'.
+ *  - endDate {string} The end date for filtering observations. If not provided, defaults to today's date.
+ *  - userName {string} The name of the user who made the observation.
+ *  - subnational1Name {string} The name of the subnational1 location of the observation.
+ *  - subnational2Name {string} The name of the subnational2 location of the observation.
+ *  - locationName {string} The name of the location of the observation.
+ * @param {Object} res - The response object.
+ * @returns {Object[]} An array of objects, each representing a bird observation, including the following fields:
+ *  - location_id {string} The location ID of the observation.
+ *  - location_name {string} The name of the location of the observation.
+ *  - subnational1_name {string} The name of the subnational1 location of the observation.
+ *  - subnational2_name {string} The name of the subnational2 location of the observation.
+ *  - full_name {string} The full name of the user who made the observation.
+ *  - latitude {number} The latitude of the location where the observation was made.
+ *  - longitude {number} The longitude of the location where the observation was made.
+ *  - total_count {number} The total count of the observed bird species at this location.
+ * @example
+ * // Request:
+ * // POST /species/reshaw/observations
+ * // Request Body: 
+ * // {
+ * //   "userName": "rick",
+ * //   "subnational1Name": "alabama",
+ * //   "subnational2Name": "lim",
+ * //   "locationName": "Rd"
+ * // }
+ * //
+ * // Response:
+ * // [
+ * //   {
+ * //     "location_id": "L22245955",
+ * //     "location_name": "15950–16498 Goode Rd, Tanner US-AL 34.69571, -87.03429",
+ * //     "subnational1_name": "Alabama",
+ * //     "subnational2_name": "Limestone",
+ * //     "full_name": "Patrick Coy",
+ * //     "latitude": 34.695711,
+ * //     "longitude": -87.03429,
+ * //     "total_count": 1
+ * //   }
+ * // ]
+ */
 const searchSpecificObservationsBySpeciesCode = async function(req, res) {
   let { startDate, 
         endDate, 
