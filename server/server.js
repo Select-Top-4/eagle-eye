@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.get('/random/species', routes.getRandomSpecies);
 app.get('/species/:species_code', routes.getOneSpecies);
-app.get('/sightings/filtered', routes.sightingsFiltered);
+app.post('/sightings/filtered', routes.sightingsFiltered);
 app.get('/sightings/recent/:species_code', routes.sightingsRecent);
 app.get('/family/:family_code', routes.getOneFamily);
 app.get('/family/:family_code/species', routes.getAllSpeciesByFamilyCode);
