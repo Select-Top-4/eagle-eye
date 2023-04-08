@@ -411,8 +411,27 @@ const getAllSpeciesByFamilyCode = async function(req, res) {
   });
 }
 
-// GET /location/:location_id
-// parameters: location_id
+/**
+ * @route GET /location/:location_id
+ * @description Get a location by its ID.
+ * @param {Object} req - The request object.
+ * @param {string} req.params.location_id - The ID of the location to retrieve.
+ * @param {Object} res - The response object.
+ * @returns {Object} The location object, including ID, name, privacy, subnational2 code, latitude and longitude.
+ * @example
+ * // Request:
+ * // GET /location/L10020909
+ * //
+ * // Response:
+ * // {
+ * //     "location_id": "L10020909",
+ * //     "location_name": "Peña Boulevard, Denver, Colorado, US (39.813, -104.787)",
+ * //     "location_private": 1,
+ * //     "subnational2_code": "US-CO-031",
+ * //     "latitude": 39.8128317,
+ * //     "longitude": -104.7868704
+ * // }
+ */
 const getLocationByID = async function(req, res) {
   connection.query(`
     SELECT
@@ -429,9 +448,9 @@ const getLocationByID = async function(req, res) {
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
-      res.json([]); 
+      res.json({}); 
     } else {
-      res.json(data);
+      res.json(data[0]);
     }
   });
 };
