@@ -13,6 +13,7 @@ app.get('/random/species', routes.getRandomSpecies);
 app.get('/all-species', routes.getAllSpecies);
 app.get('/species/:species_code', routes.getOneSpecies);
 app.get('/species/:species_code/5-latest-observations', routes.get5LatestObservationsBySpeciesCode);
+app.get('/families', routes.getAllFamilies);
 app.get('/family/:family_code', routes.getOneFamily);
 app.get('/family/:family_code/species', routes.getAllSpeciesByFamilyCode);
 app.get('/location/:location_id', routes.getLocationByID);

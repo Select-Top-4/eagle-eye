@@ -250,6 +250,69 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
 }
 
 /**
+ * @route GET /families
+ * @description Get a list of bird families with their scientific and common names, description, and a randomly selected image link.
+ * @param {Object} req - The request object.
+ * @param {Object} req.query - The query parameters for pagination:
+ * @param {number} req.query.page - The current page number (default: 1).
+ * @param {number} req.query.limit - The number of results per page (default: 10).
+ * @param {Object} res - The response object.
+ * @returns {Object[]} An array of objects, each representing a bird family with the following fields:
+ *  - family_code {string} The code of the family.
+ *  - family_scientific_name {string} The scientific name of the family.
+ *  - family_common_name {string} The common name of the family.
+ *  - family_description {string} The description of the family.
+ *  - random_family_img_link {string} A randomly selected image link for a bird species in this family.
+ * @example
+ * // Request:
+ * // GET /families?page=2&limit=5
+ * //
+ * // Response:
+ * // [
+ * //   {
+ * //       "family_code": "accipi1",
+ * //       "family_scientific_name": "Accipitridae",
+ * //       "family_common_name": "Hawks, Eagles, and Kites",
+ * //       "family_description": "The accipitrids are recognizable by a peculiar rearrangement of their chromosomes...",
+ * //       "random_family_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/0/00/Buteo_albigula.PNG/220px-Buteo_albigula.PNG"
+ * //   },
+ * //   ...
+ * // ]
+ */
+const getAllFamilies = async function(req, res) {
+  const { page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
+  
+  connection.query(`
+    SELECT 
+      family.family_code,
+      family_scientific_name,
+      family_common_name,
+      family_description,
+      MIN(species_img_link) AS random_family_img_link
+    FROM 
+      family
+    JOIN species
+      ON family.family_code = species.family_code
+    WHERE 
+      TRIM(family_description) != ""
+      AND family_description IS NOT NULL
+      AND TRIM(species_img_link) != ""
+      AND species_img_link IS NOT NULL
+      AND species_img_link != "No image src"
+    GROUP BY 1, 2, 3, 4
+    LIMIT ?, ?;
+  `, [offset, parseInt(limit)], (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json([]); 
+    } else {
+      res.json(data);
+    }
+  });
+};
+
+/**
  * @route GET /family/:family_code
  * @description Get information about a bird family by its family code.
  * @param {Object} req.params.family_code The family code of the bird family.
@@ -537,6 +600,7 @@ module.exports = {
   getAllSpecies,
   getOneSpecies,
   get5LatestObservationsBySpeciesCode,
+  getAllFamilies,
   getOneFamily,
   getAllSpeciesByFamilyCode,
   getLocationByID,
