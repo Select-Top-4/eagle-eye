@@ -147,7 +147,13 @@ const sightingsFiltered = async function(req, res) {
  * @example
  * //Request:
  * // GET /sightings/recent/bkcchi
- * // TODO: Need JSON response here. 
+ * // 
+ * // Response: 
+ * // {"observation_count":1,
+ * // "first_name":"Caitlin",
+ * // "location_name":"2646 Georgetowne Dr NW, Rochester US-MN 44.07798, -92.50146"
+ * // }
+ *  
  * 
  */
 
