@@ -277,6 +277,31 @@ const getAllSpeciesByFamilyCode = async function(req, res) {
   });
 }
 
+// Route 5: GET /location/:location_id
+// parameters: location_id
+const getLocationByID = async function(req, res) {
+  connection.query(`
+    SELECT
+      location_id,
+      location_name,
+      location_private,
+      subnational2_code,
+      latitude,
+      longitude
+    FROM 
+      ebird_location
+    WHERE 
+      location_id = '${req.params.location_id}';
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json([]); 
+    } else {
+      res.json(data);
+    }
+  });
+};
+
 /**
  * @route POST /heatmap-observations
  * @description Search a heatmap of bird sightings, filtered by time range, species, family and location.
@@ -443,5 +468,6 @@ module.exports = {
   sightingsRecent,
   getOneFamily,
   getAllSpeciesByFamilyCode,
+  getLocationByID,
   searchHeatMapObservations
 }
