@@ -136,11 +136,47 @@ const sightingsFiltered = async function(req, res) {
 
 };
 
-// Route 4: GET /sightings/recent
-// parameters: species_code
-const sightingsRecent = async function(req, res) {
+/**
+ * @route GET /sightings/recent/:species_code
+ * @description Get the 5 most recent sightings with location and user display name information.
+ * @param {Object} req - The request object 
+ * @param {string} req.params.species_code - The species code of the bird species.
+ * @param {Object} res - The response object
+ * @returns {Object} The recent sightings object, including count of birds observed, the bird watcher's first name,
+ * and the location name for the observation
+ * @example
+ * //Request:
+ * // GET /sightings/recent/bkcchi
+ * // TODO: Need JSON response here. 
+ * 
+ */
 
-}
+const sightingsRecent = async function(req, res) {
+  connection.query(`
+    SELECT 
+      observation_count,
+      ebird_user.first_name,
+      location_name
+    FROM 
+      observation  
+    JOIN ebird_location
+      ON observation.location_id = ebird_location.location_id
+    JOIN ebird_user
+      ON observation.user_id = ebird_user.user_id
+    WHERE 
+      species_code = '${req.params.species_code}' AND ebird_user.first_name IS NOT NULL
+    ORDER BY 
+      observation_date DESC
+    LIMIT 5;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({}); 
+    } else {
+      res.json(data[0]);
+    }
+  }
+)}
 
 /**
  * @route GET /family/:family_code
