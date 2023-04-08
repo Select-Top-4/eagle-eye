@@ -715,7 +715,55 @@ const searchHeatMapObservations = async function(req, res) {
   });
 };
 
-// Last Route
+/**
+ * @route GET /heatmap-observations/species-ranking
+ * @description Get a paginated species ranking based on a heatmap of bird observations, 
+ * filtered by time range, species, family and location.
+ * @param {Object} req The request object. The request query can contain the following fields:
+ *   - start_date {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
+ *   - end_date {string} The end date for filtering sightings. If not provided, defaults to today's date.
+ *   - common_name {string} The common name of the species to filter by. If not provided, defaults to all species.
+ *   - scientific_name {string} The scientific name of the species to filter by. If not provided, defaults to all species.
+ *   - family_common_name {string} The common name of the bird family to filter by. If not provided, defaults to all families.
+ *   - family_scientific_name {string} The scientific name of the bird family to filter by. If not provided, defaults to all families.
+ *   - subnational1_name {string} The name of the subnational1 location to filter by. If not provided, defaults to all locations.
+ *   - page {number} The page number for the pagination. If not provided, defaults to 1.
+ *   - limit {number} The maximum number of results per page. If not provided, defaults to 5.
+ * @param {Object} res The response object.
+ * @returns {Object[]} An array of objects, each representing a location with species sightings, including the following fields:
+ *   - species_code {string} The species code of the observed bird.
+ *   - family_code {string} The family code of the observed bird.
+ *   - location_id {string} The location ID of the observed bird.
+ *   - latitude {number} The latitude of the location where the observation was made.
+ *   - longitude {number} The longitude of the location where the observation was made.
+ *   - scientific_name {string} The scientific name of the observed bird.
+ *   - common_name {string} The common name of the observed bird.
+ *   - family_common_name {string} The common name of the bird family.
+ *   - family_scientific_name {string} The scientific name of the bird family.
+ *   - subnational1_name {string} The name of the subnational1 location of the observed bird.
+ *   - subnational2_name {string} The name of the subnational2 location of the observed bird.
+ *   - total_count {number} The total count of observations for this species at this location.
+ *
+ * @example
+ * // Request:
+ * // GET /heatmap-observations/species-ranking?start_date=2023-03-03&common_name=hawk&family_common_name=Eagles&page=1&limit=3
+ *
+ * // Response:
+ * // [
+ * //   {
+ * //     "species_code": "rethaw",
+ * //     "common_name": "Red-tailed Hawk",
+ * //     "scientific_name": "Buteo jamaicensis",
+ * //     "species_img_link": "No image src",
+ * //     "species_description": "No description",
+ * //     "family_code": "accipi1",
+ * //     "family_common_name": "Hawks, Eagles, and Kites",
+ * //     "family_scientific_name": "Accipitridae",
+ * //     "total_count": 1232
+ * //   },
+ * //   ...
+ * // ]
+ */
 const getSpeciesRankingByHeatMapObservations = async function(req, res) {
   let { start_date, 
         end_date, 
