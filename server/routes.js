@@ -249,6 +249,77 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
   });
 }
 
+// search specific observations of a species by start date and end date, user, subnational1 name (clickable),
+// subnational2 name, location.
+const searchSpecificObservationsBySpeciesCode = async function(req, res) {
+  let { startDate, 
+        endDate, 
+        userName, 
+        subnational1Name, 
+        subnational2Name,
+        locationName} = req.body;
+
+  if (!startDate && !endDate) {
+    const today = new Date();
+    startDate = '2022-12-01';
+    endDate = today.toISOString().slice(0, 10);
+  } else if (!startDate) {
+    startDate = '2022-12-01';
+  } else if (!endDate) {
+    const today = new Date();
+    endDate = today.toISOString().slice(0, 10);
+  }
+
+  userName = userName ? userName.trim().toLowerCase() : undefined;
+  subnational1Name = subnational1Name ? subnational1Name.trim().toLowerCase() : undefined;
+  subnational2Name = subnational2Name ? subnational2Name.trim().toLowerCase() : undefined;
+  locationName = locationName ? locationName.trim().toLowerCase() : undefined;
+
+  let query = `
+    SELECT 
+      L.location_id,
+      L.location_name,
+      S1.subnational1_name,
+      S2.subnational2_name,
+      CONCAT(U.first_name, ' ', U.last_name) AS full_name,
+      L.latitude,
+      L.longitude,
+      SUM(O.observation_count) AS total_count
+    FROM 
+      observation O
+    JOIN
+      ebird_user U
+      ON O.user_id = U.user_id
+    JOIN 
+      ebird_location L
+      ON O.location_id = L.location_id
+    JOIN 
+      subnational2 S2
+      ON L.subnational2_code = S2.subnational2_code
+    JOIN
+      subnational1 S1
+      ON S2.subnational1_code = S1.subnational1_code
+    WHERE
+      O.species_code = '${req.params.species_code}'
+      AND ${userName ? `LOWER(CONCAT(first_name, ' ', last_name)) LIKE '%${userName}%'` : '1 = 1'}
+      AND ${subnational1Name ? `LOWER(subnational1_name) LIKE '%${subnational1Name}%'` : '1 = 1'}
+      AND ${subnational2Name ? `LOWER(subnational2_name) LIKE '%${subnational2Name}%'` : '1 = 1'}
+      AND ${locationName? `LOWER(location_name) LIKE '%${locationName}%'` : '1 = 1'}
+      AND ${startDate ? `CAST(observation_date AS DATE) >= '${startDate}'` : '1 = 1'}
+      AND ${endDate ? `CAST(observation_date AS DATE) <= '${endDate}'` : '1 = 1'}
+    GROUP BY 1, 2, 3, 4, 5, 6, 7;
+  `;
+
+  connection.query(query, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.json([]);
+    } else {
+      res.json(data);
+    }
+  });
+}
+
 /**
  * @route GET /families
  * @description Get a list of bird families with their scientific and common names, description, and a randomly selected image link.
@@ -594,7 +665,7 @@ const searchHeatMapObservations = async function(req, res) {
       family_scientific_name,
       subnational1_name,
       subnational2_name,
-      Sum(observation_count) AS total_count
+      SUM(observation_count) AS total_count
     FROM 
       sightings_filtered S
     JOIN families_filtered F
@@ -619,145 +690,10 @@ module.exports = {
   getAllSpecies,
   getOneSpecies,
   get5LatestObservationsBySpeciesCode,
+  searchSpecificObservationsBySpeciesCode,
   getAllFamilies,
   getOneFamily,
   getAllSpeciesByFamilyCode,
   getLocationByID,
   searchHeatMapObservations
-    // sightingsFiltered
 }
-
-
-
-
-
-// Uncertain to be modified:
-/**
- * @route POST /heatmap-aggregated
- * @description Based upon the observed bird sightings selected by the user (and displayed on the heatmap), 
- * aggregate and return bird sightings by bird name from highest to lowest count of birds
- * @param {Object} req - The request object. The request body can contain the following
- *  - startDate {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
- *  - endDate {string} The end date for filtering sightings. If not provided, defaults to today's date.
- *  - commonName {string} The common name of the species to filter by. If not provided, defaults to all species.
- *  - scientificName {string} The scientific name of the species to filter by. If not provided, defaults to all species.
- *  - familyCommonName {string} The common name of the bird family to filter by. If not provided, defaults to all families.
- *  - familyScientificName {string} The scientific name of the bird family to filter by. If not provided, defaults to all families.
- *  - subnational1Name {string} The name of the subnational1 location to filter by. If not provided, defaults to all locations.
- * @param {Object} res - The response object
- * @returns {Object[]} An array of objects, each representing the aggregation of birds by species shown on the heatmap.
- *  - scientific_name {string} The scientific name of the observed bird.
- *  - common_name {string} The common name of the observed bird.
- *  - total_count {number} The total count of observations for this species at this location.
- * @example
- * // Request:
- * // POST /heatmap-observations
- * // Request Body:
- * // {
- * //     "startDate": "2023-03-03",
- * //     "commonName": "hawk",
- * //     "familyCommonName": "Eagles"
- * // }
- * //
- * // Response:
- * // [
- * //   TO DO
- * // ]
- */
-const sightingsFiltered = async function(req, res) {
-  let { startDate, 
-    endDate, 
-    commonName, 
-    scientificName, 
-    familyCommonName, 
-    familyScientificName, 
-    subnational1Name } = req.body;
-
-    if (!startDate && !endDate) {
-      const today = new Date();
-      startDate = '2022-12-01';
-      endDate = today.toISOString().slice(0, 10);
-    } else if (!startDate) {
-      startDate = '2022-12-01';
-    } else if (!endDate) {
-      const today = new Date();
-      endDate = today.toISOString().slice(0, 10);
-    }
-
-    commonName = commonName ? commonName.trim().toLowerCase() : undefined;
-    scientificName = scientificName ? scientificName.trim().toLowerCase() : undefined;
-    familyCommonName = familyCommonName ? familyCommonName.trim().toLowerCase() : undefined;
-    familyScientificName = familyScientificName ? familyScientificName.trim().toLowerCase() : undefined;
-    subnational1Name = subnational1Name ? subnational1Name.trim().toLowerCase() : undefined;
-
-    let query = `
-    WITH 
-      sightings_filtered AS (
-        SELECT 
-          location_id, 
-          species.species_code,
-          species.family_code,
-          scientific_name,
-          common_name,
-          observation_count
-        FROM
-          observation
-        JOIN species 
-          ON observation.species_code = species.species_code
-        WHERE 
-          ${commonName ? `LOWER(common_name) LIKE '%${commonName}%'` : '1 = 1'}
-          AND ${scientificName ? `LOWER(scientific_name) LIKE '%${scientificName}%'` : '1 = 1'}
-          AND ${startDate ? `CAST(observation_date AS DATE) >= '${startDate}'` : '1 = 1'}
-          AND ${endDate ? `CAST(observation_date AS DATE) <= '${endDate}'` : '1 = 1'}
-      ), 
-      locations_filtered AS (
-        SELECT 
-          location_id,
-          latitude,
-          longitude,
-          subnational1_name,
-          subnational2_name
-        FROM 
-          ebird_location E
-        JOIN subnational2 S2
-          ON E.subnational2_code = S2.subnational2_code
-        JOIN subnational1 S1
-          ON S2.subnational1_code = S1.subnational1_code
-        WHERE 
-          ${subnational1Name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1Name}%'` : '1 = 1'}
-      ),
-      families_filtered AS (
-        SELECT
-          family_code,
-          family_common_name,
-          family_scientific_name
-        FROM
-          family
-        WHERE
-          ${familyCommonName ? `LOWER(family_common_name) LIKE '%${familyCommonName}%'` : '1 = 1'}
-          AND ${familyScientificName ? `LOWER(family_scientific_name) LIKE '%${familyScientificName}%'` : '1 = 1'}
-      )
-    SELECT 
-      species_code,
-      S.family_code,
-      common_name,
-      scientific_name,
-      Sum(observation_count) AS total_count
-    FROM 
-      sightings_filtered S
-    JOIN families_filtered F
-      ON S.family_code = F.family_code
-    JOIN locations_filtered L
-      ON S.location_id = L.location_id
-    GROUP BY 1, 2, 3, 4;
-  `;
-
-  connection.query(query, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.json([]);
-    } else {
-      res.json(data);
-    }
-  });
-};
