@@ -73,7 +73,36 @@ const getRandomSpecies = async function(_, res) {
   });
 };
 
-// get all species with pagination
+/**
+ * @route GET /all-species
+ * @description Get a paginated list of bird species with common name, scientific name, description, and image link.
+ * @param {Object} req - The request object. The request query can contain the following fields:
+ *  - page {number} The page number for pagination. Defaults to 1.
+ *  - limit {number} The limit of results per page. Defaults to 10.
+ * @param {Object} res - The response object.
+ * @returns {Object} An array of bird species objects, including species code, family code, common name, scientific name, 
+ * species description, image link, whether it is extinct and the year of extinction.
+ * @example
+ * // Request:
+ * // GET /all-species?page=2&limit=5
+ * //
+ * // Response:
+ * // [
+ * //   {
+ * //       "species_code": "abdsto1",
+ * //       "family_code": "ciconi2",
+ * //       "common_name": "Abdim's Stork",
+ * //       "scientific_name": "Ciconia abdimii",
+ * //       "species_description": "Ciconia abdimii is a black stork with grey legs, red knees and feet, grey bill and white underparts...",
+ * //       "species_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/3/37/Ciconia_abdimii_-London_Zoo-8a.jpg/220px-Ciconia_abdimii_-London_Zoo-8a.jpg",
+ * //       "extinct": 0,
+ * //       "extinct_year": "",
+ * //       "family_common_name": "Storks",
+ * //       "family_scientific_name": "Ciconiidae"
+ * //   },
+ * //   ...
+ * // ]
+ */
 const getAllSpecies = async function(req, res) {
   const { page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
@@ -507,12 +536,12 @@ module.exports = {
   getRandomSpecies,
   getAllSpecies,
   getOneSpecies,
-  sightingsFiltered,
   get5LatestObservationsBySpeciesCode,
   getOneFamily,
   getAllSpeciesByFamilyCode,
   getLocationByID,
   searchHeatMapObservations
+    // sightingsFiltered
 }
 
 
