@@ -129,6 +129,7 @@ const getOneSpecies = async function(req, res) {
     }
   }
 )}
+
 /**
  * @route POST /heatmap-aggregated
  * @description Based upon the observed bird sightings selected by the user (and displayed on the heatmap), 
@@ -260,16 +261,16 @@ const sightingsFiltered = async function(req, res) {
 };
 
 /**
- * @route GET /sightings/recent/:species_code
- * @description Get the 5 most recent sightings with location and user display name information.
+ * @route GET /species/:species_code/5-latest-observations
+ * @description Get the 5 most recent observations with location and user display name information.
  * @param {Object} req - The request object 
  * @param {string} req.params.species_code - The species code of the bird species.
  * @param {Object} res - The response object
- * @returns {Object[]} An array of at most 5 recent sightings object, including count of birds observed, the bird watcher's first name,
- * and the location name for the observation
+ * @returns {Object[]} An array of at most 5 recent observations object, including count of birds observed, 
+ * the bird watcher's first name, and the location name for the observation
  * @example
  * //Request:
- * // GET /sightings/recent/bkcchi
+ * // GET /species/bkcchi/5-latest-observations
  * // 
  * // Response: 
  * // [
@@ -280,8 +281,7 @@ const sightingsFiltered = async function(req, res) {
  * //   ...
  * // ]  
  */
-
-const sightingsRecent = async function(req, res) {
+const get5LatestObservationsBySpeciesCode = async function(req, res) {
   let query = `
     SELECT 
       observation_count,
@@ -597,7 +597,7 @@ module.exports = {
   getRandomSpecies,
   getOneSpecies,
   sightingsFiltered,
-  sightingsRecent,
+  get5LatestObservationsBySpeciesCode,
   getOneFamily,
   getAllSpeciesByFamilyCode,
   getLocationByID,
