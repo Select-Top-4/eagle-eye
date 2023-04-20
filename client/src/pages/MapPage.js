@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Divider } from '@mui/material';
 import config from '../config.json';
 import BirdMap from '../components/BirdMap';
+import HeatMap from '../components/HeatMap';
 
 export default function MapPage() {
   const [birdObservations, setBirdObservations] = useState([]);
@@ -19,7 +20,8 @@ export default function MapPage() {
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-        <BirdMap birdObservations={birdObservations} />
+        {/* <BirdMap birdObservations={birdObservations} /> */}
+        <HeatMap birdObservations={birdObservations} />
     </div>
   );
 };
