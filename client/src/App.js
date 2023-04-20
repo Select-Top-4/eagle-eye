@@ -6,6 +6,7 @@ import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
 import SpeciesPage from './pages/SpeciesPage';
 import FamilyPage from './pages/FamilyPage';
+import MapPage from "./pages/MapPage";
 
 export const theme = createTheme({
   palette: {
@@ -21,6 +22,7 @@ export default function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/map" element={<MapPage />} />
           <Route path="/species/:species_code" element={<SpeciesPage />} />
           <Route path="/family/:family_code" element={<FamilyPage />} />
         </Routes>
