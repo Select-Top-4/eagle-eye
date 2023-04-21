@@ -11,7 +11,6 @@ import Box from '@mui/material/Box';
 import config from '../config.json';
 import { Link } from 'react-router-dom';
 
-
 export default function SpeciesPage() {
   const { species_code } = useParams();
   const [speciesInfo, setSpeciesInfo] = useState({});
@@ -65,11 +64,6 @@ export default function SpeciesPage() {
           </CardActions>
         </Card>
       </Box>
-
-      {/* <Divider />  */}
     </Container>
-
   );
-
-
 };

@@ -10,7 +10,6 @@ import Box from '@mui/material/Box';
 import config from '../config.json';
 import { Link } from 'react-router-dom';
 
-
 export default function FamilyPage(family_code) {
   const [familyInfo, setFamilyInfo] = useState({});
   const [familySpecies, setFamilySpecies] = useState({});
@@ -42,8 +41,5 @@ export default function FamilyPage(family_code) {
 
       {/* <Divider />  */}
     </Container>
-
   );
-
-
 };

@@ -20,8 +20,8 @@ export default function MapPage() {
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-        {/* <BirdMap birdObservations={birdObservations} /> */}
-        <HeatMap birdObservations={birdObservations} />
+      {/* <BirdMap birdObservations={birdObservations} /> */}
+      <HeatMap birdObservations={birdObservations} />
     </div>
   );
 };
