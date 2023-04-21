@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRef } from "react";
 import MapGL, { Source, Layer, Popup, NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -14,7 +14,7 @@ const BirdMap = ({ birdObservations }) => {
   const [viewport, setViewport] = useState({
     latitude: 39.833333,
     longitude: -98.583333,
-    zoom: 2.7,
+    zoom: 2.5,
     bearing: 0,
     pitch: 0,
   });
@@ -75,7 +75,7 @@ const BirdMap = ({ birdObservations }) => {
           type="circle"
           paint={{
             "circle-radius": 4,
-            "circle-color": "#3f51b5",
+            "circle-color": "#f1c40f",
             "circle-stroke-width": 1,
             "circle-stroke-color": "#ffffff",
           }}
@@ -91,7 +91,7 @@ const BirdMap = ({ birdObservations }) => {
           type="circle"
           paint={{
             "circle-radius": 7,
-            "circle-color": "#e6bc15",
+            "circle-color": "#7e57c2",
             "circle-stroke-width": 2,
             "circle-stroke-color": "#ffffff",
           }}
@@ -124,7 +124,7 @@ const BirdMap = ({ birdObservations }) => {
           closeButton={false}
           closeOnClick={false}
           onClose={() => setSelectedObservation(null)}
-          offset={15}
+          offset={20}
           className="custom-popup"
         >
           <div>
