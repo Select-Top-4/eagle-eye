@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react';
-import { Container, Divider } from '@mui/material';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import config from '../config.json';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Container, Divider } from "@mui/material";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import config from "../config.json";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [birdOfTheDay, setBirdOfTheDay] = useState();
   useEffect(() => {
     fetch(`http://${config.server_host}:${config.server_port}/random/species`)
-      .then(res => res.json())
-      .then(resJson => setBirdOfTheDay(resJson))
-      .catch(error => console.log(error));
+      .then((res) => res.json())
+      .then((resJson) => setBirdOfTheDay(resJson))
+      .catch((error) => console.log(error));
   }, []);
 
   if (!birdOfTheDay) {
@@ -41,9 +41,7 @@ export default function HomePage() {
 
     <Container>
       <Box m={2} pt={3}>
-        <Card
-          sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
-        >
+        <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
           <CardMedia
             component="img"
             sx={{ padding: "1em 1em 1em 1em", objectFit: "contain" }}
@@ -67,7 +65,14 @@ export default function HomePage() {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button component={Link} to={`/species/${birdOfTheDay.species_code}`} variant="outlined" size="large">More</Button>
+            <Button
+              component={Link}
+              to={`/species/${birdOfTheDay.species_code}`}
+              variant="outlined"
+              size="large"
+            >
+              More
+            </Button>
           </CardActions>
         </Card>
       </Box>
@@ -75,4 +80,4 @@ export default function HomePage() {
       {/* <Divider />  */}
     </Container>
   );
-};
+}
