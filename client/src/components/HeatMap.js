@@ -16,7 +16,7 @@ const HeatMap = ({ birdObservations }) => {
     const [viewport, setViewport] = useState({
         latitude: 39.833333,
         longitude: -98.583333,
-        zoom: 3,
+        zoom: 2.7,
         bearing: 0,
         pitch: 0,
     });
