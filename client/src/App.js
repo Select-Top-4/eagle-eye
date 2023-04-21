@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { indigo, amber } from '@mui/material/colors'
-import NavBar from './components/NavBar';
-import HomePage from './pages/HomePage';
-import SpeciesPage from './pages/SpeciesPage';
-import FamilyPage from './pages/FamilyPage';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { indigo, amber } from "@mui/material/colors";
+import NavBar from "./components/NavBar";
+import HomePage from "./pages/HomePage";
+import SpeciesPage from "./pages/SpeciesPage";
+import FamilyPage from "./pages/FamilyPage";
 import MapPage from "./pages/MapPage";
 
 export const theme = createTheme({

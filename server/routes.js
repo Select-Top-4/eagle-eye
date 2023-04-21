@@ -1,27 +1,30 @@
-const mysql = require('mysql');
-const config = require('./config.json');
+const mysql = require("mysql");
+const config = require("./config.json");
 
-const connection = process.env.NODE_ENV === "production" ? mysql.createConnection({
-  host: config.rds_host,
-  user: config.rds_user,
-  password: config.rds_password,
-  port: config.rds_port,
-  database: config.rds_db
-}) : mysql.createConnection({
-  host: config.local_host,
-  user: config.local_user,
-  password: config.local_password,
-  port: config.local_port,
-  database: config.local_db
-});
-connection.connect((err) => err && console.log(err));
+const connection =
+  process.env.NODE_ENV === "production"
+    ? mysql.createConnection({
+        host: config.rds_host,
+        user: config.rds_user,
+        password: config.rds_password,
+        port: config.rds_port,
+        database: config.rds_db,
+      })
+    : mysql.createConnection({
+        host: config.local_host,
+        user: config.local_user,
+        password: config.local_password,
+        port: config.local_port,
+        database: config.local_db,
+      });
+connection.connect(err => err && console.log(err));
 
-/** 
+/**
  * @route GET /random/species
  * @description Get a randomly selected bird species with common name, scientific name, description, and image link.
  * @param {Object} req - The request object (unused).
  * @param {Object} res - The response object.
- * @returns {Object} The bird species object, including species code, family code, common name, scientific name, 
+ * @returns {Object} The bird species object, including species code, family code, common name, scientific name,
  * species description, image link, whether it is extinct and the year of extinction.
  * @example
  * // Request:
@@ -39,8 +42,9 @@ connection.connect((err) => err && console.log(err));
  * //   "extinct_year": ""
  * // }
  */
-const getRandomSpecies = async function(_, res) {
-  connection.query(`
+const getRandomSpecies = async function (_, res) {
+  connection.query(
+    `
     SELECT 
       species_code,
       family_code,
@@ -63,14 +67,16 @@ const getRandomSpecies = async function(_, res) {
       AND species_img_link != "No image src"
     ORDER BY RAND()
     LIMIT 1;
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({});
-    } else {
-      res.json(data[0]);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data[0]);
+      }
     }
-  });
+  );
 };
 
 /**
@@ -80,7 +86,7 @@ const getRandomSpecies = async function(_, res) {
  *  - page {number} The page number for pagination. Defaults to 1.
  *  - limit {number} The limit of results per page. Defaults to 10.
  * @param {Object} res - The response object.
- * @returns {Object} An array of bird species objects, including species code, family code, common name, scientific name, 
+ * @returns {Object} An array of bird species objects, including species code, family code, common name, scientific name,
  * species description, image link, whether it is extinct and the year of extinction.
  * @example
  * // Request:
@@ -103,11 +109,12 @@ const getRandomSpecies = async function(_, res) {
  * //   ...
  * // ]
  */
-const getAllSpecies = async function(req, res) {
+const getAllSpecies = async function (req, res) {
   const { page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
-  
-  connection.query(`
+
+  connection.query(
+    `
     SELECT 
       species_code,
       species.family_code,
@@ -133,14 +140,17 @@ const getAllSpecies = async function(req, res) {
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
     LIMIT ?, ?;
-  `, [offset, parseInt(limit)], (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json([]); 
-    } else {
-      res.json(data);
+  `,
+    [offset, parseInt(limit)],
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json([]);
+      } else {
+        res.json(data);
+      }
     }
-  });
+  );
 };
 
 /**
@@ -149,7 +159,7 @@ const getAllSpecies = async function(req, res) {
  * @param {Object} req - The request object
  * @param {string} req.params.species_code - The species code for the bird species to get details for.
  * @param {Object} res - The response object
- * @returns {Object} The bird species details object, including species code, family code, common name, 
+ * @returns {Object} The bird species details object, including species code, family code, common name,
  * scientific name, description, image link, whether it is extinct, the year of extinction,
  * family common name, and family scientific name.
  * @example
@@ -170,8 +180,9 @@ const getAllSpecies = async function(req, res) {
  * //   "family_scientific_name": "Fringillidae"
  * // }
  */
-const getOneSpecies = async function(req, res) {
-  connection.query(`
+const getOneSpecies = async function (req, res) {
+  connection.query(
+    `
     SELECT 
       species_code,
       species.family_code,
@@ -189,38 +200,40 @@ const getOneSpecies = async function(req, res) {
       ON species.family_code = family.family_code
     WHERE 
       species_code = '${req.params.species_code}';
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({}); 
-    } else {
-      res.json(data[0]);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data[0]);
+      }
     }
-  }
-)}
+  );
+};
 
 /**
  * @route GET /species/:species_code/5-latest-observations
  * @description Get the 5 most recent observations with location and user display name information.
- * @param {Object} req - The request object 
+ * @param {Object} req - The request object
  * @param {string} req.params.species_code - The species code of the bird species.
  * @param {Object} res - The response object
- * @returns {Object[]} An array of at most 5 recent observations object, including count of birds observed, 
+ * @returns {Object[]} An array of at most 5 recent observations object, including count of birds observed,
  * the bird watcher's first name, and the location name for the observation
  * @example
  * //Request:
  * // GET /species/bkcchi/5-latest-observations
- * // 
- * // Response: 
+ * //
+ * // Response:
  * // [
  * //   {"observation_count":1,
  * //   "first_name":"Anonymous",
  * //   "location_name":"Green Hills County Park, Raleigh US-NC (35.9113,-78.5758)"
  * //   },
  * //   ...
- * // ]  
+ * // ]
  */
-const get5LatestObservationsBySpeciesCode = async function(req, res) {
+const get5LatestObservationsBySpeciesCode = async function (req, res) {
   let query = `
     SELECT 
       observation_count,
@@ -238,7 +251,7 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
       observation_date DESC
     LIMIT 5;
   `;
-  
+
   connection.query(query, (err, data) => {
     if (err) {
       console.log(err);
@@ -247,7 +260,7 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
       res.json(data);
     }
   });
-}
+};
 
 /**
  * @route GET /specific-observations/:species_code
@@ -287,29 +300,37 @@ const get5LatestObservationsBySpeciesCode = async function(req, res) {
  * //   }
  * // ]
  */
-const searchSpecificObservationsBySpeciesCode = async function(req, res) {
-  let { start_date, 
-        end_date, 
-        user_name, 
-        subnational1_name, 
-        subnational2_name,
-        location_name} = req.query;
+const searchSpecificObservationsBySpeciesCode = async function (req, res) {
+  let {
+    start_date,
+    end_date,
+    user_name,
+    subnational1_name,
+    subnational2_name,
+    location_name,
+  } = req.query;
 
   if (!start_date && !end_date) {
     const today = new Date();
-    start_date = '2022-12-01';
+    start_date = "2022-12-01";
     end_date = today.toISOString().slice(0, 10);
   } else if (!start_date) {
-    start_date = '2022-12-01';
+    start_date = "2022-12-01";
   } else if (!end_date) {
     const today = new Date();
     end_date = today.toISOString().slice(0, 10);
   }
 
   user_name = user_name ? user_name.trim().toLowerCase() : undefined;
-  subnational1_name = subnational1_name ? subnational1_name.trim().toLowerCase() : undefined;
-  subnational2_name = subnational2_name ? subnational2_name.trim().toLowerCase() : undefined;
-  location_name = location_name ? location_name.trim().toLowerCase() : undefined;
+  subnational1_name = subnational1_name
+    ? subnational1_name.trim().toLowerCase()
+    : undefined;
+  subnational2_name = subnational2_name
+    ? subnational2_name.trim().toLowerCase()
+    : undefined;
+  location_name = location_name
+    ? location_name.trim().toLowerCase()
+    : undefined;
 
   let query = `
     SELECT 
@@ -337,12 +358,34 @@ const searchSpecificObservationsBySpeciesCode = async function(req, res) {
       ON S2.subnational1_code = S1.subnational1_code
     WHERE
       O.species_code = '${req.params.species_code}'
-      AND ${user_name ? `LOWER(CONCAT(first_name, ' ', last_name)) LIKE '%${user_name}%'` : '1 = 1'}
-      AND ${subnational1_name ? `LOWER(subnational1_name) LIKE '%${subnational1_name}%'` : '1 = 1'}
-      AND ${subnational2_name ? `LOWER(subnational2_name) LIKE '%${subnational2_name}%'` : '1 = 1'}
-      AND ${location_name? `LOWER(location_name) LIKE '%${location_name}%'` : '1 = 1'}
-      AND ${start_date ? `CAST(observation_date AS DATE) >= '${start_date}'` : '1 = 1'}
-      AND ${end_date ? `CAST(observation_date AS DATE) <= '${end_date}'` : '1 = 1'}
+      AND ${
+        user_name
+          ? `LOWER(CONCAT(first_name, ' ', last_name)) LIKE '%${user_name}%'`
+          : "1 = 1"
+      }
+      AND ${
+        subnational1_name
+          ? `LOWER(subnational1_name) LIKE '%${subnational1_name}%'`
+          : "1 = 1"
+      }
+      AND ${
+        subnational2_name
+          ? `LOWER(subnational2_name) LIKE '%${subnational2_name}%'`
+          : "1 = 1"
+      }
+      AND ${
+        location_name
+          ? `LOWER(location_name) LIKE '%${location_name}%'`
+          : "1 = 1"
+      }
+      AND ${
+        start_date
+          ? `CAST(observation_date AS DATE) >= '${start_date}'`
+          : "1 = 1"
+      }
+      AND ${
+        end_date ? `CAST(observation_date AS DATE) <= '${end_date}'` : "1 = 1"
+      }
     GROUP BY 1, 2, 3, 4, 5, 6, 7;
   `;
 
@@ -354,7 +397,7 @@ const searchSpecificObservationsBySpeciesCode = async function(req, res) {
       res.json(data);
     }
   });
-}
+};
 
 /**
  * @route GET /families
@@ -386,11 +429,12 @@ const searchSpecificObservationsBySpeciesCode = async function(req, res) {
  * //   ...
  * // ]
  */
-const getAllFamilies = async function(req, res) {
+const getAllFamilies = async function (req, res) {
   const { page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
-  
-  connection.query(`
+
+  connection.query(
+    `
     SELECT 
       family.family_code,
       family_scientific_name,
@@ -409,14 +453,17 @@ const getAllFamilies = async function(req, res) {
       AND species_img_link != "No image src"
     GROUP BY 1, 2, 3, 4
     LIMIT ?, ?;
-  `, [offset, parseInt(limit)], (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json([]); 
-    } else {
-      res.json(data);
+  `,
+    [offset, parseInt(limit)],
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json([]);
+      } else {
+        res.json(data);
+      }
     }
-  });
+  );
 };
 
 /**
@@ -443,8 +490,9 @@ const getAllFamilies = async function(req, res) {
  * //   "random_family_img_link": "upload.wikimedia.org/wikipedia/commons/thumb/a/af/Streaked_Rosefinch.jpg/220px-Streaked_Rosefinch.jpg"
  * // }
  */
-const getOneFamily = async function(req, res) {
-  connection.query(`
+const getOneFamily = async function (req, res) {
+  connection.query(
+    `
     SELECT 
       family.family_code,
       family_scientific_name,
@@ -459,15 +507,17 @@ const getOneFamily = async function(req, res) {
       family.family_code = '${req.params.family_code}'
     ORDER BY RAND()
     LIMIT 1; 
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({}); 
-    } else {
-      res.json(data[0]);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data[0]);
+      }
     }
-  });
-}
+  );
+};
 
 /**
  * @route GET /species/families/:family_code
@@ -497,8 +547,9 @@ const getOneFamily = async function(req, res) {
  * //   ...
  * // ]
  */
-const getAllSpeciesByFamilyCode = async function(req, res) {
-  connection.query(`
+const getAllSpeciesByFamilyCode = async function (req, res) {
+  connection.query(
+    `
     SELECT
       species_code,
       common_name,
@@ -508,15 +559,17 @@ const getAllSpeciesByFamilyCode = async function(req, res) {
     WHERE 
       family_code = '${req.params.family_code}'
     ORDER BY RAND();
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json([]); 
-    } else {
-      res.json(data);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json([]);
+      } else {
+        res.json(data);
+      }
     }
-  });
-}
+  );
+};
 
 /**
  * @route GET /location/:location_id
@@ -539,8 +592,9 @@ const getAllSpeciesByFamilyCode = async function(req, res) {
  * //     "longitude": -104.7868704
  * // }
  */
-const getLocationByID = async function(req, res) {
-  connection.query(`
+const getLocationByID = async function (req, res) {
+  connection.query(
+    `
     SELECT
       location_id,
       location_name,
@@ -552,14 +606,16 @@ const getLocationByID = async function(req, res) {
       ebird_location
     WHERE 
       location_id = '${req.params.location_id}';
-  `, (err, data) => {
-    if (err || data.length === 0) {
-      console.log(err);
-      res.json({}); 
-    } else {
-      res.json(data[0]);
+  `,
+    (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data[0]);
+      }
     }
-  });
+  );
 };
 
 /**
@@ -610,31 +666,41 @@ const getLocationByID = async function(req, res) {
  * //   ...
  * // ]
  */
-const searchHeatMapObservations = async function(req, res) {
-  let { start_date, 
-        end_date, 
-        common_name, 
-        scientific_name, 
-        family_common_name, 
-        family_scientific_name, 
-        subnational1_name } = req.query;
+const searchHeatMapObservations = async function (req, res) {
+  let {
+    start_date,
+    end_date,
+    common_name,
+    scientific_name,
+    family_common_name,
+    family_scientific_name,
+    subnational1_name,
+  } = req.query;
 
   if (!start_date && !end_date) {
     const today = new Date();
-    start_date = '2022-12-01';
+    start_date = "2022-12-01";
     end_date = today.toISOString().slice(0, 10);
   } else if (!start_date) {
-    start_date = '2022-12-01';
+    start_date = "2022-12-01";
   } else if (!end_date) {
     const today = new Date();
     end_date = today.toISOString().slice(0, 10);
   }
 
   common_name = common_name ? common_name.trim().toLowerCase() : undefined;
-  scientific_name = scientific_name ? scientific_name.trim().toLowerCase() : undefined;
-  family_common_name = family_common_name ? family_common_name.trim().toLowerCase() : undefined;
-  family_scientific_name = family_scientific_name ? family_scientific_name.trim().toLowerCase() : undefined;
-  subnational1_name = subnational1_name ? subnational1_name.trim().toLowerCase() : undefined;
+  scientific_name = scientific_name
+    ? scientific_name.trim().toLowerCase()
+    : undefined;
+  family_common_name = family_common_name
+    ? family_common_name.trim().toLowerCase()
+    : undefined;
+  family_scientific_name = family_scientific_name
+    ? family_scientific_name.trim().toLowerCase()
+    : undefined;
+  subnational1_name = subnational1_name
+    ? subnational1_name.trim().toLowerCase()
+    : undefined;
 
   let query = `
     WITH 
@@ -651,10 +717,24 @@ const searchHeatMapObservations = async function(req, res) {
         JOIN species 
           ON observation.species_code = species.species_code
         WHERE 
-          ${common_name ? `LOWER(common_name) LIKE '%${common_name}%'` : '1 = 1'}
-          AND ${scientific_name ? `LOWER(scientific_name) LIKE '%${scientific_name}%'` : '1 = 1'}
-          AND ${start_date ? `CAST(observation_date AS DATE) >= '${start_date}'` : '1 = 1'}
-          AND ${end_date ? `CAST(observation_date AS DATE) <= '${end_date}'` : '1 = 1'}
+          ${
+            common_name ? `LOWER(common_name) LIKE '%${common_name}%'` : "1 = 1"
+          }
+          AND ${
+            scientific_name
+              ? `LOWER(scientific_name) LIKE '%${scientific_name}%'`
+              : "1 = 1"
+          }
+          AND ${
+            start_date
+              ? `CAST(observation_date AS DATE) >= '${start_date}'`
+              : "1 = 1"
+          }
+          AND ${
+            end_date
+              ? `CAST(observation_date AS DATE) <= '${end_date}'`
+              : "1 = 1"
+          }
       ), 
       locations_filtered AS (
         SELECT 
@@ -670,7 +750,11 @@ const searchHeatMapObservations = async function(req, res) {
         JOIN subnational1 S1
           ON S2.subnational1_code = S1.subnational1_code
         WHERE 
-          ${subnational1_name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1_name}%'` : '1 = 1'}
+          ${
+            subnational1_name
+              ? `LOWER(S1.subnational1_name) LIKE '%${subnational1_name}%'`
+              : "1 = 1"
+          }
       ),
       families_filtered AS (
         SELECT
@@ -680,8 +764,16 @@ const searchHeatMapObservations = async function(req, res) {
         FROM
           family
         WHERE
-          ${family_common_name ? `LOWER(family_common_name) LIKE '%${family_common_name}%'` : '1 = 1'}
-          AND ${family_scientific_name ? `LOWER(family_scientific_name) LIKE '%${family_scientific_name}%'` : '1 = 1'}
+          ${
+            family_common_name
+              ? `LOWER(family_common_name) LIKE '%${family_common_name}%'`
+              : "1 = 1"
+          }
+          AND ${
+            family_scientific_name
+              ? `LOWER(family_scientific_name) LIKE '%${family_scientific_name}%'`
+              : "1 = 1"
+          }
       )
     SELECT 
       species_code,
@@ -717,7 +809,7 @@ const searchHeatMapObservations = async function(req, res) {
 
 /**
  * @route GET /heatmap-observations/species-ranking
- * @description Get a paginated species ranking based on a heatmap of bird observations, 
+ * @description Get a paginated species ranking based on a heatmap of bird observations,
  * filtered by time range, species, family and location.
  * @param {Object} req The request object. The request query can contain the following fields:
  *   - start_date {string} The start date for filtering sightings. If not provided, defaults to '2022-12-01'.
@@ -764,33 +856,43 @@ const searchHeatMapObservations = async function(req, res) {
  * //   ...
  * // ]
  */
-const getSpeciesRankingByHeatMapObservations = async function(req, res) {
-  let { start_date, 
-        end_date, 
-        common_name, 
-        scientific_name, 
-        family_common_name, 
-        family_scientific_name, 
-        subnational1_name,
-        page = 1,
-        limit = 5 } = req.query;
+const getSpeciesRankingByHeatMapObservations = async function (req, res) {
+  let {
+    start_date,
+    end_date,
+    common_name,
+    scientific_name,
+    family_common_name,
+    family_scientific_name,
+    subnational1_name,
+    page = 1,
+    limit = 5,
+  } = req.query;
 
   if (!start_date && !end_date) {
     const today = new Date();
-    start_date = '2022-12-01';
+    start_date = "2022-12-01";
     end_date = today.toISOString().slice(0, 10);
   } else if (!start_date) {
-    start_date = '2022-12-01';
+    start_date = "2022-12-01";
   } else if (!end_date) {
     const today = new Date();
     end_date = today.toISOString().slice(0, 10);
   }
 
   common_name = common_name ? common_name.trim().toLowerCase() : undefined;
-  scientific_name = scientific_name ? scientific_name.trim().toLowerCase() : undefined;
-  family_common_name = family_common_name ? family_common_name.trim().toLowerCase() : undefined;
-  family_scientific_name = family_scientific_name ? family_scientific_name.trim().toLowerCase() : undefined;
-  subnational1_name = subnational1_name ? subnational1_name.trim().toLowerCase() : undefined;
+  scientific_name = scientific_name
+    ? scientific_name.trim().toLowerCase()
+    : undefined;
+  family_common_name = family_common_name
+    ? family_common_name.trim().toLowerCase()
+    : undefined;
+  family_scientific_name = family_scientific_name
+    ? family_scientific_name.trim().toLowerCase()
+    : undefined;
+  subnational1_name = subnational1_name
+    ? subnational1_name.trim().toLowerCase()
+    : undefined;
 
   const offset = (page - 1) * limit;
 
@@ -811,10 +913,24 @@ const getSpeciesRankingByHeatMapObservations = async function(req, res) {
         JOIN species 
           ON observation.species_code = species.species_code
         WHERE 
-          ${common_name ? `LOWER(common_name) LIKE '%${common_name}%'` : '1 = 1'}
-          AND ${scientific_name ? `LOWER(scientific_name) LIKE '%${scientific_name}%'` : '1 = 1'}
-          AND ${start_date ? `CAST(observation_date AS DATE) >= '${start_date}'` : '1 = 1'}
-          AND ${end_date ? `CAST(observation_date AS DATE) <= '${end_date}'` : '1 = 1'}
+          ${
+            common_name ? `LOWER(common_name) LIKE '%${common_name}%'` : "1 = 1"
+          }
+          AND ${
+            scientific_name
+              ? `LOWER(scientific_name) LIKE '%${scientific_name}%'`
+              : "1 = 1"
+          }
+          AND ${
+            start_date
+              ? `CAST(observation_date AS DATE) >= '${start_date}'`
+              : "1 = 1"
+          }
+          AND ${
+            end_date
+              ? `CAST(observation_date AS DATE) <= '${end_date}'`
+              : "1 = 1"
+          }
       ), 
       locations_filtered AS (
         SELECT 
@@ -830,7 +946,11 @@ const getSpeciesRankingByHeatMapObservations = async function(req, res) {
         JOIN subnational1 S1
           ON S2.subnational1_code = S1.subnational1_code
         WHERE 
-          ${subnational1_name ? `LOWER(S1.subnational1_name) LIKE '%${subnational1_name}%'` : '1 = 1'}
+          ${
+            subnational1_name
+              ? `LOWER(S1.subnational1_name) LIKE '%${subnational1_name}%'`
+              : "1 = 1"
+          }
       ),
       families_filtered AS (
         SELECT
@@ -840,8 +960,16 @@ const getSpeciesRankingByHeatMapObservations = async function(req, res) {
         FROM
           family
         WHERE
-          ${family_common_name ? `LOWER(family_common_name) LIKE '%${family_common_name}%'` : '1 = 1'}
-          AND ${family_scientific_name ? `LOWER(family_scientific_name) LIKE '%${family_scientific_name}%'` : '1 = 1'}
+          ${
+            family_common_name
+              ? `LOWER(family_common_name) LIKE '%${family_common_name}%'`
+              : "1 = 1"
+          }
+          AND ${
+            family_scientific_name
+              ? `LOWER(family_scientific_name) LIKE '%${family_scientific_name}%'`
+              : "1 = 1"
+          }
       )
     SELECT 
       species_code,
@@ -885,5 +1013,5 @@ module.exports = {
   getAllSpeciesByFamilyCode,
   getLocationByID,
   searchHeatMapObservations,
-  getSpeciesRankingByHeatMapObservations
-}
+  getSpeciesRankingByHeatMapObservations,
+};

@@ -1,72 +1,72 @@
 [
-    {
-      "latitude": 41.3103371000,
-      "longitude": -71.8743918000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 44
-    },
-    {
-      "latitude": 30.2393404000,
-      "longitude": -89.4247466000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 4
-    },
-    {
-      "latitude": 38.3240000000,
-      "longitude": -75.0910000000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 167
-    },
-    {
-      "latitude": 39.0365891000,
-      "longitude": -74.7912741000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 262
-    },
-    {
-      "latitude": 32.7530466000,
-      "longitude": -79.9160481000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 3
-    },
-    {
-      "latitude": 33.9843993000,
-      "longitude": -77.9107690000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 8
-    },
-    {
-      "latitude": 27.8175030000,
-      "longitude": -82.7669210000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 11
-    },
-    {
-      "latitude": 31.8378994000,
-      "longitude": -81.0919762000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 2
-    },
-    {
-      "latitude": 40.5888889000,
-      "longitude": -73.5566667000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 76
-    },
-    {
-      "latitude": 28.1325500000,
-      "longitude": -96.9850520000,
-      "scientific_name": "Haematopus palliatus",
-      "common_name": "American Oystercatcher",
-      "total_count": 9
-    }
-  ]
+  {
+    "latitude": 41.3103371000,
+    "longitude": -71.8743918000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 44
+  },
+  {
+    "latitude": 30.2393404000,
+    "longitude": -89.4247466000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 4
+  },
+  {
+    "latitude": 38.3240000000,
+    "longitude": -75.0910000000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 167
+  },
+  {
+    "latitude": 39.0365891000,
+    "longitude": -74.7912741000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 262
+  },
+  {
+    "latitude": 32.7530466000,
+    "longitude": -79.9160481000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 3
+  },
+  {
+    "latitude": 33.9843993000,
+    "longitude": -77.9107690000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 8
+  },
+  {
+    "latitude": 27.8175030000,
+    "longitude": -82.7669210000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 11
+  },
+  {
+    "latitude": 31.8378994000,
+    "longitude": -81.0919762000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 2
+  },
+  {
+    "latitude": 40.5888889000,
+    "longitude": -73.5566667000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 76
+  },
+  {
+    "latitude": 28.1325500000,
+    "longitude": -96.9850520000,
+    "scientific_name": "Haematopus palliatus",
+    "common_name": "American Oystercatcher",
+    "total_count": 9
+  }
+]

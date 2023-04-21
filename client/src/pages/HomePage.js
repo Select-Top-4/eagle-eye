@@ -14,9 +14,9 @@ export default function HomePage() {
   const [birdOfTheDay, setBirdOfTheDay] = useState();
   useEffect(() => {
     fetch(`http://${config.server_host}:${config.server_port}/random/species`)
-      .then((res) => res.json())
-      .then((resJson) => setBirdOfTheDay(resJson))
-      .catch((error) => console.log(error));
+      .then(res => res.json())
+      .then(resJson => setBirdOfTheDay(resJson))
+      .catch(error => console.log(error));
   }, []);
 
   if (!birdOfTheDay) {

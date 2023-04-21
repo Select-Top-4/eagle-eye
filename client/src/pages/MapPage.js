@@ -12,9 +12,9 @@ export default function MapPage() {
     fetch(
       `http://${config.server_host}:${config.server_port}/heatmap-observations?start_date=2023-03-03&common_name=hawk&family_common_name=Eagles`
     )
-      .then((res) => res.json())
-      .then((resJson) => setBirdObservations(resJson))
-      .catch((error) => console.log(error));
+      .then(res => res.json())
+      .then(resJson => setBirdObservations(resJson))
+      .catch(error => console.log(error));
   }, []);
 
   const toggleMapType = () => {

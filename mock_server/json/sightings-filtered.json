@@ -1,72 +1,72 @@
 [
-    {
-      "latitude": 39.1237325000,
-      "longitude": -96.0701929000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 38.9366886000,
-      "longitude": -94.8990229000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 38.8249317000,
-      "longitude": -94.6676315000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 38.8261927000,
-      "longitude": -94.6530449000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 37.7074294000,
-      "longitude": -96.1400431000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 39.1027150000,
-      "longitude": -99.3445240000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 37.2293973000,
-      "longitude": -96.2024827000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 38.8260770000,
-      "longitude": -94.6529180000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 38.0127760000,
-      "longitude": -98.1103620000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    },
-    {
-      "latitude": 38.8255570000,
-      "longitude": -94.6491140000,
-      "scientific_name": "Megascops asio",
-      "common_name": "Eastern Screech-Owl",
-      "total_count": 1
-    }
-  ]
+  {
+    "latitude": 39.1237325000,
+    "longitude": -96.0701929000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 38.9366886000,
+    "longitude": -94.8990229000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 38.8249317000,
+    "longitude": -94.6676315000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 38.8261927000,
+    "longitude": -94.6530449000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 37.7074294000,
+    "longitude": -96.1400431000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 39.1027150000,
+    "longitude": -99.3445240000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 37.2293973000,
+    "longitude": -96.2024827000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 38.8260770000,
+    "longitude": -94.6529180000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 38.0127760000,
+    "longitude": -98.1103620000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  },
+  {
+    "latitude": 38.8255570000,
+    "longitude": -94.6491140000,
+    "scientific_name": "Megascops asio",
+    "common_name": "Eastern Screech-Owl",
+    "total_count": 1
+  }
+]

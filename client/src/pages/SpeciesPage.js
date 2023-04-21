@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import { Container, Divider } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import config from '../config.json';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import { Container, Divider } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import config from "../config.json";
+import { Link } from "react-router-dom";
 
 export default function SpeciesPage() {
   const { species_code } = useParams();
   const [speciesInfo, setSpeciesInfo] = useState({});
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/species/${species_code}`)
+    fetch(
+      `http://${config.server_host}:${config.server_port}/species/${species_code}`
+    )
       .then(res => res.json())
       .then(resJson => setSpeciesInfo(resJson))
       .catch(error => console.log(error));
@@ -28,9 +30,7 @@ export default function SpeciesPage() {
   return (
     <Container>
       <Box m={2} pt={3}>
-        <Card
-          sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
-        >
+        <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
           <CardMedia
             component="img"
             sx={{ padding: "1em 1em 1em 1em", objectFit: "contain" }}
@@ -57,13 +57,22 @@ export default function SpeciesPage() {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button component={Link} to="/" variant="outlined" size="large">Back</Button>
+            <Button component={Link} to="/" variant="outlined" size="large">
+              Back
+            </Button>
           </CardActions>
           <CardActions>
-            <Button component={Link} to={`/family/${speciesInfo.family_code}`} variant="outlined" size="large">Family Info</Button>
+            <Button
+              component={Link}
+              to={`/family/${speciesInfo.family_code}`}
+              variant="outlined"
+              size="large"
+            >
+              Family Info
+            </Button>
           </CardActions>
         </Card>
       </Box>
     </Container>
   );
-};
+}
