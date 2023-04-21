@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, Box, Button } from '@mui/material';
+import { Container, Box, Button, CircularProgress } from '@mui/material';
 import config from '../config.json';
 import ScatterMap from '../components/ScatterMap';
 import HeatMap from '../components/HeatMap';
@@ -19,8 +19,19 @@ export default function MapPage() {
     setMapType(mapType === 'heatmap' ? 'scatter' : 'heatmap');
   };
 
-  if (!birdObservations) {
-    return <div>Loading...</div>;
+  if (!birdObservations.length) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
