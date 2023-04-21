@@ -6,10 +6,65 @@ import {
   Button,
   CircularProgress,
   TextField,
+  Autocomplete
 } from "@mui/material";
 import config from "../config.json";
 import ScatterMap from "../components/ScatterMap";
 import HeatMap from "../components/HeatMap";
+
+const US_STATES = [
+  "Alaska",
+  "Alabama",
+  "Arkansas",
+  "Arizona",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "District of Columbia",
+  "Delaware",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Iowa",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Massachusetts",
+  "Maryland",
+  "Maine",
+  "Michigan",
+  "Minnesota",
+  "Missouri",
+  "Mississippi",
+  "Montana",
+  "North Carolina",
+  "North Dakota",
+  "Nebraska",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "Nevada",
+  "New York",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Virginia",
+  "Vermont",
+  "Washington",
+  "Wisconsin",
+  "West Virginia",
+  "Wyoming",
+];
 
 export default function MapPage() {
   const [birdObservations, setBirdObservations] = useState([]);
@@ -21,7 +76,7 @@ export default function MapPage() {
     scientific_name: "",
     family_common_name: "",
     family_scientific_name: "",
-    subnational1_name: "",
+    subnational1_name: [],
   };
   const [searchOptions, setSearchOptions] = useState(initialSearchOptions);
 
@@ -53,7 +108,9 @@ export default function MapPage() {
       ...(scientific_name && { scientific_name }),
       ...(family_common_name && { family_common_name }),
       ...(family_scientific_name && { family_scientific_name }),
-      ...(subnational1_name && { subnational1_name }),
+      ...(subnational1_name.length > 0 && {
+        subnational1_name: subnational1_name.join(","),
+      }),
     });
 
     fetch(
@@ -180,16 +237,20 @@ export default function MapPage() {
               />
             </Grid>
             <Grid item xs={12} sm={4} md={3}>
-              <TextField
-                label="Subnational1 Name"
+              <Autocomplete
+                multiple
+                options={US_STATES}
+                getOptionLabel={option => option}
                 value={searchOptions.subnational1_name}
-                onChange={e =>
+                onChange={(event, newValue) => {
                   setSearchOptions({
                     ...searchOptions,
-                    subnational1_name: e.target.value,
-                  })
-                }
-                fullWidth
+                    subnational1_name: newValue,
+                  });
+                }}
+                renderInput={params => (
+                  <TextField {...params} label="Subnational1 Name" fullWidth />
+                )}
               />
             </Grid>
             <Grid item xs={12}>

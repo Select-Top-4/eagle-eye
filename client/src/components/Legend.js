@@ -1,7 +1,7 @@
 import React from "react";
 import "./Legend.css";
 
-const Legend = ({ quantiles }) => {
+const Legend = ({ quantiles, legendLarge }) => {
   if (!quantiles) return null;
 
   const colorScale = [
@@ -15,14 +15,14 @@ const Legend = ({ quantiles }) => {
   const quantileLabels = quantiles.map((q, i, arr) => {
     if (i === 0) {
       return `<= ${parseInt(q)}`;
-    } else if (i === arr.length - 1) {
+    } else if (i === arr.length - 1 && arr.length !== 4) {
       return `${parseInt(arr[i - 1]) + 1} - ${parseInt(q)}`;
     } else {
       return `${parseInt(arr[i - 1]) + 1} - ${parseInt(q)}`;
     }
   });
-  
-  if (quantiles.length > 1) {
+
+  if (quantiles.length === 4 && legendLarge) {
     quantileLabels.push(`> ${parseInt(quantiles[quantiles.length - 1])}`);
   }
 

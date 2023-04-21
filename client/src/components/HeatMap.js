@@ -15,6 +15,7 @@ const HeatMap = ({ birdObservations }) => {
   const [hoveredState, setHoveredState] = useState(null);
   const [hoveredStateName, setHoveredStateName] = useState(null);
   const [quantiles, setQuantiles] = useState(null);
+  const [legendLarge, setLegendLarge] = useState(false);
 
   const [viewport, setViewport] = useState({
     latitude: 39.833333,
@@ -43,6 +44,7 @@ const HeatMap = ({ birdObservations }) => {
     const totalCounts = Object.values(stateData).sort((a, b) => a - b);
     const uniqueCounts = new Set(totalCounts);
     const colorScale = ["#fff9c4", "#fff176", "#ffeb3b", "#fdd835", "#fbc02d"];
+
     if (uniqueCounts.size <= colorScale.length) {
       const sortedUniqueCounts = Array.from(uniqueCounts).sort((a, b) => a - b);
 
@@ -58,6 +60,7 @@ const HeatMap = ({ birdObservations }) => {
       return {
         updatedStateBoundaries,
         quantiles: sortedUniqueCounts,
+        legendLarge: false,
       };
     }
 
@@ -86,16 +89,18 @@ const HeatMap = ({ birdObservations }) => {
     return {
       updatedStateBoundaries,
       quantiles: [q1, q2, q3, q4],
+      legendLarge: true,
     };
   };
 
   useEffect(() => {
-    const { updatedStateBoundaries, quantiles } = aggregateByState(
+    const { updatedStateBoundaries, quantiles, legendLarge } = aggregateByState(
       birdObservations,
       usStates
     );
     setStateBoundaries(updatedStateBoundaries);
     setQuantiles(quantiles);
+    setLegendLarge(legendLarge);
   }, [birdObservations]);
 
   const handleMouseMove = e => {
@@ -195,7 +200,7 @@ const HeatMap = ({ birdObservations }) => {
       )}
 
       <div style={{ position: "absolute", bottom: 30, right: 10 }}>
-        <Legend quantiles={quantiles} />
+        <Legend quantiles={quantiles} legendLarge={legendLarge} />
       </div>
     </MapGL>
   );
