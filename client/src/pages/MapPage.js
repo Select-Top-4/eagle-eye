@@ -6,7 +6,7 @@ import {
   Button,
   CircularProgress,
   TextField,
-  Autocomplete
+  Autocomplete,
 } from "@mui/material";
 import config from "../config.json";
 import ScatterMap from "../components/ScatterMap";
@@ -65,6 +65,9 @@ const US_STATES = [
   "West Virginia",
   "Wyoming",
 ];
+const currentYear = new Date().getFullYear();
+const minDate = `${currentYear}-01-01`;
+const maxDate = `${currentYear}-12-31`;
 
 export default function MapPage() {
   const [birdObservations, setBirdObservations] = useState([]);
@@ -164,6 +167,10 @@ export default function MapPage() {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                inputProps={{
+                  min: minDate,
+                  max: searchOptions.end_date || maxDate,
+                }}
                 fullWidth
               />
             </Grid>
@@ -180,6 +187,10 @@ export default function MapPage() {
                 }
                 InputLabelProps={{
                   shrink: true,
+                }}
+                inputProps={{
+                  min: searchOptions.start_date || minDate,
+                  max: maxDate,
                 }}
                 fullWidth
               />
@@ -249,7 +260,7 @@ export default function MapPage() {
                   });
                 }}
                 renderInput={params => (
-                  <TextField {...params} label="Subnational1 Name" fullWidth />
+                  <TextField {...params} label="State or Region" fullWidth />
                 )}
               />
             </Grid>
