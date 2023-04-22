@@ -2,7 +2,7 @@ import { AppBar, Container, Toolbar, Typography } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import ForestIcon from "@mui/icons-material/Forest";
 import MapIcon from "@mui/icons-material/Map";
-import "./NavBar.css";
+import "./css/NavBar.css";
 
 const NavText = ({ href, text, isMain, icon }) => {
   return (

@@ -5,6 +5,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import usStates from "../map_data/usstates.json";
 import { quantile } from "d3-array";
 import Legend from "./Legend";
+import "./css/Popup.css";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 

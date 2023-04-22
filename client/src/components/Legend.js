@@ -1,16 +1,10 @@
 import React from "react";
-import "./Legend.css";
+import "./css/Legend.css";
 
 const Legend = ({ quantiles, legendLarge }) => {
   if (!quantiles) return null;
 
-  const colorScale = [
-    "#fff9c4",
-    "#fff176",
-    "#ffeb3b",
-    "#fdd835",
-    "#fbc02d",
-  ];
+  const colorScale = ["#fff9c4", "#fff176", "#ffeb3b", "#fdd835", "#fbc02d"];
 
   const quantileLabels = quantiles.map((q, i, arr) => {
     if (i === 0) {

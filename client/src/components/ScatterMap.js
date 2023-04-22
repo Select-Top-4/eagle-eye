@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRef } from "react";
 import MapGL, { Source, Layer, Popup, NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import "./Popup.css";
+import "./css/Popup.css";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
