@@ -822,18 +822,16 @@ const searchHeatMapObservations = async function (req, res) {
  *   - page {number} The page number for the pagination. If not provided, defaults to 1.
  *   - limit {number} The maximum number of results per page. If not provided, defaults to 5.
  * @param {Object} res The response object.
- * @returns {Object[]} An array of objects, each representing a location with species sightings, including the following fields:
+ * @returns {Object[]} An array of objects, each representing a species with total count aggregated for the selected observations,
+ *   including the following fields:
  *   - species_code {string} The species code of the observed bird.
- *   - family_code {string} The family code of the observed bird.
- *   - location_id {string} The location ID of the observed bird.
- *   - latitude {number} The latitude of the location where the observation was made.
- *   - longitude {number} The longitude of the location where the observation was made.
- *   - scientific_name {string} The scientific name of the observed bird.
  *   - common_name {string} The common name of the observed bird.
+ *   - scientific_name {string} The scientific name of the observed bird.
+ *   - species_img_link {string} The image link of the observed bird.
+ *   - species_description {string} The description of the observed bird.
+ *   - family_code {string} The family code of the observed bird.
  *   - family_common_name {string} The common name of the bird family.
  *   - family_scientific_name {string} The scientific name of the bird family.
- *   - subnational1_name {string} The name of the subnational1 location of the observed bird.
- *   - subnational2_name {string} The name of the subnational2 location of the observed bird.
  *   - total_count {number} The total count of observations for this species at this location.
  *
  * @example
