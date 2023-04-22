@@ -105,9 +105,10 @@ const HeatMap = ({ birdObservations }) => {
   }, [birdObservations]);
 
   const handleMouseMove = e => {
-    const features = e.target.queryRenderedFeatures(e.point, {
+    const features =  mapRef.current.queryRenderedFeatures(e.point, {
       layers: ["choropleth"],
     });
+
     if (features.length > 0) {
       const feature = features[0];
       setHoveredState({

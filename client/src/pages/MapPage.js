@@ -11,6 +11,7 @@ import {
 import config from "../config.json";
 import ScatterMap from "../components/ScatterMap";
 import HeatMap from "../components/HeatMap";
+import LazyTable from "../components/LazyTable";
 
 const US_STATES = [
   "Alaska",
@@ -68,9 +69,17 @@ const US_STATES = [
 const currentYear = new Date().getFullYear();
 const minDate = `${currentYear}-01-01`;
 const maxDate = `${currentYear}-12-31`;
+const columns = [
+  { field: "common_name", headerName: "Common Name" },
+  { field: "scientific_name", headerName: "Scientific Name" },
+  { field: "family_common_name", headerName: "Family Common Name" },
+  { field: "family_scientific_name", headerName: "Family Scientific Name" },
+  { field: "total_count", headerName: "Total Count" },
+];
 
 export default function MapPage() {
   const [birdObservations, setBirdObservations] = useState([]);
+  const [speciesRankingRoute, setSpeciesRankingRoute] = useState("");
   const [mapType, setMapType] = useState("heatmap");
   const initialSearchOptions = {
     start_date: "",
@@ -88,8 +97,9 @@ export default function MapPage() {
       `http://${config.server_host}:${config.server_port}/heatmap-observations?start_date=2023-03-21`
     )
       .then(res => res.json())
-      .then(resJson => setBirdObservations(resJson))
-      .catch(error => console.log(error));
+      .then(resJson => {
+        setBirdObservations(resJson);
+      });
   }, []);
 
   const handleSearch = event => {
@@ -127,6 +137,12 @@ export default function MapPage() {
         setSearchOptions(initialSearchOptions);
       })
       .catch(error => console.log(error));
+
+      setSpeciesRankingRoute(
+        `http://${config.server_host}:${
+          config.server_port
+        }/heatmap-observations/species-ranking?${params.toString()}`
+      );
   };
 
   const toggleMapType = () => {
@@ -304,6 +320,14 @@ export default function MapPage() {
           <ScatterMap birdObservations={birdObservations} />
         )}
       </Box>
+      {speciesRankingRoute && (
+        <LazyTable
+          route={speciesRankingRoute}
+          columns={columns}
+          defaultPageSize={5}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
+      )}
     </Container>
   );
 }
