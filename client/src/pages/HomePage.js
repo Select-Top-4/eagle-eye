@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { Container, Divider } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import {
+  Container,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import config from "../config.json";
 import { Link } from "react-router-dom";
 
@@ -20,7 +23,18 @@ export default function HomePage() {
   }, []);
 
   if (!birdOfTheDay) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -77,7 +91,6 @@ export default function HomePage() {
         </Card>
       </Box>
 
-      {/* <Divider />  */}
     </Container>
   );
 }
