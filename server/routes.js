@@ -818,7 +818,7 @@ const searchHeatMapObservations = async function (req, res) {
  *   - scientific_name {string} The scientific name of the species to filter by. If not provided, defaults to all species.
  *   - family_common_name {string} The common name of the bird family to filter by. If not provided, defaults to all families.
  *   - family_scientific_name {string} The scientific name of the bird family to filter by. If not provided, defaults to all families.
- *   - subnational1_name {string} The name of the subnational1 location to filter by. If not provided, defaults to all locations.
+ *   - subnational1_name {string} The names of the subnational1 location to filter by. If not provided, defaults to all locations.
  *   - page {number} The page number for the pagination. If not provided, defaults to 1.
  *   - limit {number} The maximum number of results per page. If not provided, defaults to 5.
  * @param {Object} res The response object.
@@ -891,7 +891,7 @@ const getSpeciesRankingByHeatMapObservations = async function (req, res) {
     ? family_scientific_name.trim().toLowerCase()
     : undefined;
   subnational1_name = subnational1_name
-    ? subnational1_name.trim().toLowerCase()
+    ? subnational1_name.split(",").map(name => name.trim().toLowerCase())
     : undefined;
 
   const offset = (page - 1) * limit;
@@ -948,7 +948,7 @@ const getSpeciesRankingByHeatMapObservations = async function (req, res) {
         WHERE 
           ${
             subnational1_name
-              ? `LOWER(S1.subnational1_name) LIKE '%${subnational1_name}%'`
+              ? `FIND_IN_SET(LOWER(S1.subnational1_name), '${subnational1_name}')`
               : "1 = 1"
           }
       ),
