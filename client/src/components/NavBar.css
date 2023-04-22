@@ -1,0 +1,11 @@
+.navLink {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s;
+}
+
+.navLink:hover {
+  color: #fff9c4;
+}

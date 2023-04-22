@@ -1,7 +1,10 @@
 import { AppBar, Container, Toolbar, Typography } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import ForestIcon from "@mui/icons-material/Forest";
+import MapIcon from "@mui/icons-material/Map";
+import "./NavBar.css";
 
-const NavText = ({ href, text, isMain }) => {
+const NavText = ({ href, text, isMain, icon }) => {
   return (
     <Typography
       variant={isMain ? "h5" : "h7"}
@@ -13,13 +16,8 @@ const NavText = ({ href, text, isMain }) => {
         letterSpacing: ".3rem",
       }}
     >
-      <NavLink
-        to={href}
-        style={{
-          color: "inherit",
-          textDecoration: "none",
-        }}
-      >
+      <NavLink to={href} className="navLink">
+        {icon && <span style={{ marginRight: "8px" }}>{icon}</span>}
         {text}
       </NavLink>
     </Typography>
@@ -31,9 +29,8 @@ export default function NavBar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <NavText href="/" text="Eagle Eye" isMain />
-          <NavText href="/map" text="Maps" />
-          {/* <NavText href='/songs' text='SONGS' /> */}
+          <NavText href="/" text="Eagle Eye" isMain icon={<ForestIcon />} />
+          <NavText href="/map" text="Maps" icon={<MapIcon />} />
         </Toolbar>
       </Container>
     </AppBar>
