@@ -61,10 +61,11 @@ const getRandomSpecies = async function (_, res) {
       AND scientific_name IS NOT NULL
       AND TRIM(species_description) != ""
       AND species_description IS NOT NULL
-      AND species_description != "No description"
+      AND LENGTH(species_description) > 200
       AND TRIM(species_img_link) != ""
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
+      AND (species_img_link NOT LIKE "%Question_book%")
       AND species_code IN (SELECT species_code FROM observation)
     ORDER BY RAND()
     LIMIT 1;
@@ -136,11 +137,13 @@ const getAllSpecies = async function (req, res) {
       AND scientific_name IS NOT NULL
       AND TRIM(species_description) != ""
       AND species_description IS NOT NULL
-      AND species_description != "No description"
+      AND LENGTH(species_description) > 200
       AND TRIM(species_img_link) != ""
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
+      AND (species_img_link NOT LIKE "%Question_book%")
       AND species_code IN (SELECT species_code FROM observation)
+    ORDER BY RAND()
     LIMIT ?, ?;
   `,
     [offset, parseInt(limit)],

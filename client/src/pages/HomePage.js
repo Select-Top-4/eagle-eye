@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Container,
   Box,
+  Grid,
   CardMedia,
   Typography,
   CircularProgress,
@@ -9,19 +10,78 @@ import {
   Button,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import CardFlip from "react-card-flip";
 import config from "../config.json";
+
+function SpeciesCard({ species }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsFlipped(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsFlipped(false);
+  };
+
+  return (
+    <Grid item xs={6} sm={4} md={3} lg={2} key={species.species_code}>
+      <CardFlip isFlipped={isFlipped}>
+        <Paper
+          elevation={3}
+          sx={{
+            p: 1,
+            borderRadius: 2,
+            height: "200px",
+            backgroundSize: "cover",
+            backgroundImage: `url(https://${species.species_img_link})`,
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        />
+        <Paper
+          elevation={3}
+          sx={{
+            p: 1,
+            borderRadius: 2,
+            height: "200px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <Typography variant="h6" component="h3" textAlign="center">
+            {species.common_name}
+          </Typography>
+        </Paper>
+      </CardFlip>
+    </Grid>
+  );
+}
 
 export default function HomePage() {
   const [birdOfTheDay, setBirdOfTheDay] = useState({});
+  const [speciesList, setSpeciesList] = useState([]);
 
   useEffect(() => {
     fetch(`http://${config.server_host}:${config.server_port}/random/species`)
       .then(res => res.json())
       .then(resJson => setBirdOfTheDay(resJson))
       .catch(error => console.log(error));
-  }, []);  
+  }, []);
 
-  if (!birdOfTheDay || !birdOfTheDay.common_name) {
+  useEffect(() => {
+    fetch(
+      `http://${config.server_host}:${config.server_port}/all-species?page=1&limit=18`
+    )
+      .then(res => res.json())
+      .then(resJson => setSpeciesList(resJson))
+      .catch(error => console.log(error));
+  }, []);
+
+  if (!birdOfTheDay || !birdOfTheDay.common_name || !speciesList) {
     return (
       <Box
         sx={{
@@ -54,9 +114,15 @@ export default function HomePage() {
             position: "relative",
           }}
         >
-          <Box>
+          <Box
+            sx={{
+              maxHeight: "300px",
+              overflowY: "auto",
+              pr: 2, // Add some padding to the right
+            }}
+          >
             <Typography gutterBottom variant="h4" component="h2">
-              Bird of the day
+              BIRD OF THE DAY
             </Typography>
             <Typography gutterBottom variant="h5" component="h2">
               {birdOfTheDay.common_name}
@@ -79,12 +145,13 @@ export default function HomePage() {
               More Info
             </Button>
           </Box>
+
           <CardMedia
             component="img"
             sx={{
               width: "300px",
               height: "250px",
-              objectFit: "cover",
+              objectFit: "fill",
               borderRadius: 1,
               ml: 2,
             }}
@@ -94,8 +161,13 @@ export default function HomePage() {
           />
         </Paper>
       </Box>
-      <Box m={2} pt={3}>
-        {/* Add more content here */}
+
+      <Box m={2} pt={2}>
+        <Grid container spacing={2}>
+          {speciesList.map(species => (
+            <SpeciesCard key={species.species_code} species={species} />
+          ))}
+        </Grid>
       </Box>
     </Container>
   );
