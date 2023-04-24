@@ -511,6 +511,8 @@ const getOneFamily = async function (req, res) {
       ON family.family_code = species.family_code
     WHERE 
       family.family_code = '${req.params.family_code}'
+      AND species_img_link IS NOT NULL
+      AND TRIM(species_img_link) != ""
     ORDER BY RAND()
     LIMIT 1; 
   `,

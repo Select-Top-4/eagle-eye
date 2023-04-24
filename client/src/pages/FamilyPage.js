@@ -1,23 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import { Container, Divider } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Box from '@mui/material/Box';
-import config from '../config.json';
-import { Link } from 'react-router-dom';
-import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+  Container,
+  Divider,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Typography,
+  Button,
+  Box,
+} from "@mui/material";
+import config from "../config.json";
+import { Link } from "react-router-dom";
+import { DataGrid } from "@mui/x-data-grid";
 
 export default function FamilyPage() {
   const { family_code } = useParams();
@@ -26,10 +23,15 @@ export default function FamilyPage() {
   const [pageSize, setPageSize] = useState(10);
 
   const columns = [
-    {field: 'common_name', headerName: 'Species', flex: 1, renderCell: (params) => (
-      <Link to={`/species/${params.id}`}>{params.row.common_name}</Link>
-    )}  
-  ]
+    {
+      field: "common_name",
+      headerName: "Species",
+      flex: 1,
+      renderCell: params => (
+        <Link to={`/species/${params.id}`}>{params.row.common_name}</Link>
+      ),
+    },
+  ];
 
   useEffect(() => {
     fetch(
@@ -39,6 +41,7 @@ export default function FamilyPage() {
       .then(resJson => setFamilyInfo(resJson))
       .catch(error => console.log(error));
   }, []);
+
   useEffect(() => {
     fetch(
       `http://${config.server_host}:${config.server_port}/family/${family_code}/species`
@@ -51,38 +54,48 @@ export default function FamilyPage() {
   }, []);
 
   if (!familyInfo || !familySpecies) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
     <Container>
-      
       <Box m={2} pt={3}>
-        <Card
-          sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
-        >
-           <CardContent sx={{width: '2500px'}}>
+        <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
+          <CardContent sx={{ width: "2500px" }}>
             <CardMedia
-            component="img"
-            sx={{ padding: "1em 1em 1em 1em", objectFit: "contain" }}
-            height="250"
-            image={"https://" + familyInfo.random_family_img_link}
-            alt={familyInfo.family_common_name}
-            title={familyInfo.family_common_name}
-          />
+              component="img"
+              sx={{ padding: "1em 1em 1em 1em", objectFit: "contain" }}
+              height="250"
+              image={"https://" + familyInfo.random_family_img_link}
+              alt={familyInfo.family_common_name}
+              title={familyInfo.family_common_name}
+            />
           </CardContent>
-          
-          <CardContent sx={{ flexGrow: 1}} >
-            <Typography gutterBottom variant="body1" component="h3" textAlign="center" >
-             {familyInfo.family_description}
+
+          <CardContent sx={{ flexGrow: 1 }}>
+            <Typography
+              gutterBottom
+              variant="body1"
+              component="h3"
+              textAlign="center"
+            >
+              {familyInfo.family_description}
             </Typography>
           </CardContent>
         </Card>
         <Divider />
-        <Card
-          sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
-        >
-        
+        <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
           <CardContent sx={{ flexGrow: 1 }}>
             <Typography gutterBottom variant="body1" component="h3">
               Common name: {familyInfo.family_common_name}
@@ -91,36 +104,28 @@ export default function FamilyPage() {
               Family: {familyInfo.family_scientific_name}
             </Typography>
           </CardContent>
-
-
         </Card>
-        <Card
-          sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-        >
-        <Typography gutterBottom variant="body1" component="h3">
-              Recent Sightings 
-        </Typography>
+        <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+          <Typography gutterBottom variant="body1" component="h3">
+            Recent Sightings
+          </Typography>
 
-        <DataGrid
+          <DataGrid
             rows={familySpecies}
             columns={columns}
             pageSize={pageSize}
             rowsPerPageOptions={[5, 10, 25]}
-            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            onPageSizeChange={newPageSize => setPageSize(newPageSize)}
             autoHeight
-        />
-          
+          />
         </Card>
 
         <CardActions>
-            <Button component={Link} to="/" variant="outlined" size="large" >Back</Button>
-          </CardActions>
+          <Button component={Link} to="/" variant="outlined" size="large">
+            Back
+          </Button>
+        </CardActions>
       </Box>
-
-      {/* <Divider />  */}
     </Container>
-
   );
-
-
-};
+}

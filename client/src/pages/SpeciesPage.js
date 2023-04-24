@@ -7,7 +7,6 @@ import {
   Box,
   Grid,
   Paper,
-  Divider,
   Table,
   TableBody,
   TableCell,
@@ -67,10 +66,10 @@ export default function SpeciesPage() {
               component="h3"
               textAlign="center"
             >
-              More about the {speciesInfo.common_name}
+              {speciesInfo.common_name}
             </Typography>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={3}>
             <Paper
               elevation={3}
               sx={{
@@ -90,22 +89,7 @@ export default function SpeciesPage() {
               />
             </Paper>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
-              <Typography
-                gutterBottom
-                variant="body1"
-                component="h3"
-                textAlign="center"
-              >
-                {speciesInfo.species_description}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider />
-          </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
               <Typography gutterBottom variant="body1" component="h3">
                 Species: {speciesInfo.scientific_name}
@@ -119,19 +103,29 @@ export default function SpeciesPage() {
               <Typography gutterBottom variant="body1" component="h3">
                 Family common name: {speciesInfo.family_common_name}
               </Typography>
+              <Button
+                component={Link}
+                to={`/family/${speciesInfo.family_code}`}
+                variant="outlined"
+                size="large"
+                fullWidth
+                sx={{ mb: 3 }}
+              >
+                Read More About {speciesInfo.family_scientific_name}
+              </Button>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Button
-              component={Link}
-              to={`/family/${speciesInfo.family_code}`}
-              variant="outlined"
-              size="large"
-              fullWidth
-              sx={{ mb: 3 }}
-            >
-              More About {speciesInfo.family_common_name}
-            </Button>
+          <Grid item xs={12} md={5}>
+            <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
+              <Typography
+                gutterBottom
+                variant="body1"
+                component="h3"
+                textAlign="center"
+              >
+                {speciesInfo.species_description}
+              </Typography>
+            </Paper>
           </Grid>
           <Grid item xs={12}>
             <Typography gutterBottom variant="body1" component="h3">
