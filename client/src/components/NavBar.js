@@ -10,10 +10,10 @@ const NavText = ({ href, text, isMain, icon }) => {
       variant={isMain ? "h5" : "h7"}
       noWrap
       style={{
-        marginRight: "30px",
-        fontFamily: "monospace",
-        fontWeight: 700,
-        letterSpacing: ".3rem",
+        marginRight: "40px",
+        fontFamily: "Arial",
+        fontWeight: "bold",
+        letterSpacing: "0.08em",
       }}
     >
       <NavLink to={href} className="navLink">

@@ -8,13 +8,17 @@ import {
   CircularProgress,
   Typography,
   Box,
+  Grid,
+  Pagination,
 } from "@mui/material";
+import SpeciesCard from "../components/SpeciesCard";
 import config from "../config.json";
 
 export default function FamilyPage() {
   const { family_code } = useParams();
   const [familyInfo, setFamilyInfo] = useState({});
   const [familySpecies, setFamilySpecies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetch(
@@ -85,7 +89,10 @@ export default function FamilyPage() {
               component="h2"
               textAlign="center"
             >
-              {familyInfo.family_common_name} {familyInfo.family_scientific_name ? `(${familyInfo.family_scientific_name})` : ""}
+              {familyInfo.family_common_name}{" "}
+              {familyInfo.family_scientific_name
+                ? `(${familyInfo.family_scientific_name})`
+                : ""}
             </Typography>
             <Typography
               variant="body1"
@@ -103,6 +110,32 @@ export default function FamilyPage() {
             </Typography>
           </CardContent>
         </Card>
+      </Box>
+
+      <Box m={2} pt={3}>
+        <Grid container spacing={4}>
+          {familySpecies
+            .slice((currentPage - 1) * 4, currentPage * 4)
+            .map(species => (
+              <SpeciesCard key={species.species_code} species={species} />
+            ))}
+        </Grid>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 2,
+          }}
+        >
+          <Pagination
+            count={Math.ceil(familySpecies.length / 4)}
+            page={currentPage}
+            onChange={(event, value) => setCurrentPage(value)}
+            color="secondary"
+            size="large"
+          />
+        </Box>
       </Box>
     </Container>
   );
