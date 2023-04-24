@@ -15,7 +15,6 @@ export default function HomePage() {
   const [birdOfTheDay, setBirdOfTheDay] = useState({});
 
   useEffect(() => {
-    console.log("Fetching bird of the day");
     fetch(`http://${config.server_host}:${config.server_port}/random/species`)
       .then(res => res.json())
       .then(resJson => setBirdOfTheDay(resJson))

@@ -65,6 +65,7 @@ const getRandomSpecies = async function (_, res) {
       AND TRIM(species_img_link) != ""
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
+      AND species_code IN (SELECT species_code FROM observation)
     ORDER BY RAND()
     LIMIT 1;
   `,
@@ -73,7 +74,6 @@ const getRandomSpecies = async function (_, res) {
         console.log(err);
         res.json({});
       } else {
-        console.log(data[0]);
         res.json(data[0]);
       }
     }
@@ -140,6 +140,7 @@ const getAllSpecies = async function (req, res) {
       AND TRIM(species_img_link) != ""
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
+      AND species_code IN (SELECT species_code FROM observation)
     LIMIT ?, ?;
   `,
     [offset, parseInt(limit)],
