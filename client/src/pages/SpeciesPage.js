@@ -69,66 +69,116 @@ export default function SpeciesPage() {
               {speciesInfo.common_name}
             </Typography>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Paper
-              elevation={3}
-              sx={{
-                p: 2,
-                mb: 3,
-                borderRadius: 2,
-                backgroundColor: "primary.main",
-                color: "white",
-                position: "relative",
-              }}
-            >
-              <img
-                src={"https://" + speciesInfo.species_img_link}
-                alt={speciesInfo.common_name}
-                title={speciesInfo.common_name}
-                style={{ width: "100%", height: "auto", borderRadius: "4px" }}
-              />
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
-              <Typography gutterBottom variant="body1" component="h3">
-                Species: {speciesInfo.scientific_name}
-              </Typography>
-              <Typography gutterBottom variant="body1" component="h3">
-                Common name: {speciesInfo.common_name}
-              </Typography>
-              <Typography gutterBottom variant="body1" component="h3">
-                Family: {speciesInfo.family_scientific_name}
-              </Typography>
-              <Typography gutterBottom variant="body1" component="h3">
-                Family common name: {speciesInfo.family_common_name}
-              </Typography>
-              <Button
-                component={Link}
-                to={`/family/${speciesInfo.family_code}`}
-                variant="outlined"
-                size="large"
-                fullWidth
-                sx={{ mb: 3 }}
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={3}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 2,
+                  mb: 3,
+                  borderRadius: 2,
+                  backgroundColor: "primary.main",
+                  color: "white",
+                  position: "relative",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
               >
-                Read More About {speciesInfo.family_scientific_name}
-              </Button>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={5}>
-            <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
-              <Typography
-                gutterBottom
-                variant="body1"
-                component="h3"
-                textAlign="center"
+                <img
+                  src={"https://" + speciesInfo.species_img_link}
+                  alt={speciesInfo.common_name}
+                  title={speciesInfo.common_name}
+                  style={{ width: "100%", height: "200px", borderRadius: "4px" }}
+                />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} height={"252px"}>
+              <Paper
+                elevation={1}
+                sx={{
+                  p: 2,
+                  mb: 3,
+                  borderRadius: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                }}
               >
-                {speciesInfo.species_description}
-              </Typography>
-            </Paper>
+                <Typography
+                  gutterBottom
+                  variant="body1"
+                  component="h3"
+                  flexGrow={1}
+                >
+                  Species: {speciesInfo.scientific_name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="body1"
+                  component="h3"
+                  flexGrow={1}
+                >
+                  Common name: {speciesInfo.common_name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="body1"
+                  component="h3"
+                  flexGrow={1}
+                >
+                  Family: {speciesInfo.family_scientific_name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="body1"
+                  component="h3"
+                  flexGrow={1}
+                >
+                  Family common name: {speciesInfo.family_common_name}
+                </Typography>
+                <Button
+                  component={Link}
+                  to={`/family/${speciesInfo.family_code}`}
+                  variant="outlined"
+                  size="large"
+                  fullWidth
+                  sx={{ mb: 3 }}
+                >
+                  Read More About {speciesInfo.family_scientific_name}
+                </Button>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <Paper
+                elevation={1}
+                sx={{
+                  p: 2,
+                  mb: 3,
+                  borderRadius: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography
+                  gutterBottom
+                  variant="body1"
+                  component="h3"
+                  textAlign="center"
+                  flexGrow={1}
+                  sx={{
+                    overflowY: "auto",
+                    maxHeight: "200px", // Adjust maxHeight according to your preference
+                  }}
+                >
+                  {speciesInfo.species_description}
+                </Typography>
+              </Paper>
+            </Grid>
           </Grid>
+
           <Grid item xs={12}>
-            <Typography gutterBottom variant="body1" component="h3">
+            <Typography gutterBottom variant="body1" component="h2">
               Recent Sightings
             </Typography>
             <TableContainer component={Paper} sx={{ mb: 3 }}>

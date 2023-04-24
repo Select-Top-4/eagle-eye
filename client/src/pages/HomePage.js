@@ -21,7 +21,7 @@ export default function HomePage() {
       .catch(error => console.log(error));
   }, []);  
 
-  if (!birdOfTheDay) {
+  if (!birdOfTheDay || !birdOfTheDay.common_name) {
     return (
       <Box
         sx={{

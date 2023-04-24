@@ -53,7 +53,7 @@ export default function FamilyPage() {
       .catch(error => console.log(error));
   }, []);
 
-  if (!familyInfo || !familySpecies) {
+  if (!familyInfo || !familyInfo.family_code || !familySpecies) {
     return (
       <Box
         sx={{
