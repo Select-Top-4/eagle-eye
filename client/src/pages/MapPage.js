@@ -320,7 +320,7 @@ export default function MapPage() {
           <ScatterMap birdObservations={birdObservations} />
         )}
       </Box>
-      {speciesRankingRoute && (
+      {(birdObservations.length && speciesRankingRoute) && (
         <LazyTable
           route={speciesRankingRoute}
           columns={columns}
