@@ -533,14 +533,17 @@ const getOneFamily = async function (req, res) {
 };
 
 /**
- * @route GET /species/families/:family_code
+ * @route GET /family/:family_code/species
  * @description Get all species for a given family code.
  * @param {Object} req.params.family_code The family code of the bird family.
+ * @param {number} req.query.page - The page number (default: 1).
+ * @param {number} req.query.limit - The number of results per page (default: 10).
  * @param {Object} res - The response object.
  * @returns {Object} An array of objects, each representing a species with the following fields:
  *  - species_code {string} The code of the species.
  *  - common_name {string} The common name of the species.
  *  - scientific_name {string} The scientific name of the species.
+ *  - species_img_link {string} A link to an image of the species.
  * @example
  * // Request:
  * // GET /family/fringi1/species
@@ -550,29 +553,41 @@ const getOneFamily = async function (req, res) {
  * //   {
  * //     "species_code": "comcha2",
  * //     "common_name": "Common Chaffinch (Tunisian)",
- * //     "scientific_name": "Fringilla coelebs spodiogenys"
+ * //     "scientific_name": "Fringilla coelebs spodiogenys",
+ * //     "species_img_link": "No image src"
  * //   },
  * //   {
  * //     "species_code": "eurgol1",
  * //     "common_name": "European Goldfinch (European)",
- * //     "scientific_name": "Carduelis carduelis [carduelis Group]"
+ * //     "scientific_name": "Carduelis carduelis [carduelis Group]",
+ * //     "species_img_link": "No image src"
  * //   },
  * //   ...
  * // ]
  */
 const getAllSpeciesByFamilyCode = async function (req, res) {
+  let { page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
+
   connection.query(
     `
     SELECT
-      species_code AS id,
+      species_code,
       common_name,
-      scientific_name
+      scientific_name,
+      species_img_link
     FROM 
       species
     WHERE 
       family_code = '${req.params.family_code}'
-    ORDER BY RAND();
+      AND species_img_link IS NOT NULL
+      AND TRIM(species_img_link) != ""
+      AND species_img_link != "No image src"
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter")
+    ORDER BY RAND()
+    LIMIT ?, ?;
   `,
+    [offset, parseInt(limit)],
     (err, data) => {
       if (err || data.length === 0) {
         console.log(err);
