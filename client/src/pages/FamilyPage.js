@@ -40,7 +40,7 @@ export default function FamilyPage() {
       .then(res => res.json())
       .then(resJson => setFamilyInfo(resJson))
       .catch(error => console.log(error));
-  }, []);
+  }, [family_code]);
 
   useEffect(() => {
     fetch(
@@ -51,7 +51,7 @@ export default function FamilyPage() {
         setFamilySpecies(resJson);
       })
       .catch(error => console.log(error));
-  }, []);
+  }, [family_code]);
 
   if (!familyInfo || !familyInfo.family_code || !familySpecies) {
     return (

@@ -43,7 +43,7 @@ export default function SpeciesPage() {
       .catch(error => console.log(error));
   }, [species_code]);
 
-  if (!speciesInfo) {
+  if (!speciesInfo || !speciesInfo.species_code || !sightings) {
     return (
       <Box
         sx={{
@@ -69,7 +69,7 @@ export default function SpeciesPage() {
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
-                mb: 2
+                mb: 2,
               }}
             >
               <IconButton
@@ -231,7 +231,16 @@ export default function SpeciesPage() {
                         <TableCell component="th" scope="row">
                           {sighting.observation_date}
                         </TableCell>
-                        <TableCell>{sighting.location_name}</TableCell>
+                        <TableCell>
+                          <a
+                            href={`https://www.google.com/maps/search/${sighting.location_name}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "inherit" }}
+                          >
+                            {sighting.location_name}
+                          </a>
+                        </TableCell>
                         <TableCell>{sighting.observation_count}</TableCell>
                         <TableCell>{`${sighting.first_name} ${sighting.last_name}`}</TableCell>
                       </TableRow>
