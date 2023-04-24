@@ -78,7 +78,7 @@ const columns = [
 ];
 
 export default function MapPage() {
-  const [birdObservations, setBirdObservations] = useState([]);
+  const [birdObservations, setBirdObservations] = useState(null);
   const [speciesRankingRoute, setSpeciesRankingRoute] = useState("");
   const [mapType, setMapType] = useState("heatmap");
   const initialSearchOptions = {
@@ -149,7 +149,7 @@ export default function MapPage() {
     setMapType(mapType === "heatmap" ? "scatter" : "heatmap");
   };
 
-  if (!birdObservations.length) {
+  if (!birdObservations) {
     return (
       <Box
         sx={{
