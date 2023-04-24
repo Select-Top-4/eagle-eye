@@ -141,7 +141,7 @@ const getAllSpecies = async function (req, res) {
       AND TRIM(species_img_link) != ""
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
-      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter")
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter|_map")
       AND species_code IN (SELECT species_code FROM observation)
     ORDER BY RAND()
     LIMIT ?, ?;
@@ -517,7 +517,7 @@ const getOneFamily = async function (req, res) {
       AND species_img_link IS NOT NULL
       AND TRIM(species_img_link) != ""
       AND species_img_link != "No image src"
-      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter")
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter|_map")
     ORDER BY RAND()
     LIMIT 1; 
   `,
@@ -554,13 +554,15 @@ const getOneFamily = async function (req, res) {
  * //     "species_code": "comcha2",
  * //     "common_name": "Common Chaffinch (Tunisian)",
  * //     "scientific_name": "Fringilla coelebs spodiogenys",
- * //     "species_img_link": "No image src"
+ * //     "species_img_link": "No image src",
+ * //     "species_description": "No description"
  * //   },
  * //   {
  * //     "species_code": "eurgol1",
  * //     "common_name": "European Goldfinch (European)",
  * //     "scientific_name": "Carduelis carduelis [carduelis Group]",
- * //     "species_img_link": "No image src"
+ * //     "species_img_link": "No image src",
+ * //     "species_description": "No description"
  * //   },
  * //   ...
  * // ]
@@ -575,7 +577,8 @@ const getAllSpeciesByFamilyCode = async function (req, res) {
       species_code,
       common_name,
       scientific_name,
-      species_img_link
+      species_img_link,
+      species_description
     FROM 
       species
     WHERE 
@@ -583,7 +586,9 @@ const getAllSpeciesByFamilyCode = async function (req, res) {
       AND species_img_link IS NOT NULL
       AND TRIM(species_img_link) != ""
       AND species_img_link != "No image src"
-      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter")
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter|_map")
+      AND LENGTH(species_description) > 200
+      AND species_code IN (SELECT species_code FROM observation)
     ORDER BY RAND()
     LIMIT ?, ?;
   `,
