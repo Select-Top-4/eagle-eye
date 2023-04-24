@@ -2,36 +2,19 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Container,
-  Divider,
   Card,
-  CardActions,
   CardContent,
   CardMedia,
   CircularProgress,
   Typography,
-  Button,
   Box,
 } from "@mui/material";
 import config from "../config.json";
-import { Link } from "react-router-dom";
-import { DataGrid } from "@mui/x-data-grid";
 
 export default function FamilyPage() {
   const { family_code } = useParams();
   const [familyInfo, setFamilyInfo] = useState({});
-  const [familySpecies, setFamilySpecies] = useState({});
-  const [pageSize, setPageSize] = useState(10);
-
-  const columns = [
-    {
-      field: "common_name",
-      headerName: "Species",
-      flex: 1,
-      renderCell: params => (
-        <Link to={`/species/${params.id}`}>{params.row.common_name}</Link>
-      ),
-    },
-  ];
+  const [familySpecies, setFamilySpecies] = useState([]);
 
   useEffect(() => {
     fetch(
@@ -71,60 +54,55 @@ export default function FamilyPage() {
   return (
     <Container>
       <Box m={2} pt={3}>
-        <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
-          <CardContent sx={{ width: "2500px" }}>
-            <CardMedia
-              component="img"
-              sx={{ padding: "1em 1em 1em 1em", objectFit: "contain" }}
-              height="250"
-              image={"https://" + familyInfo.random_family_img_link}
-              alt={familyInfo.family_common_name}
-              title={familyInfo.family_common_name}
-            />
-          </CardContent>
+        <Card
+          sx={{
+            height: 300,
+            display: "flex",
+            flexDirection: "row",
+            backgroundColor: "secondary.main",
+          }}
+        >
+          <CardMedia
+            component="img"
+            sx={{ width: "50%", objectFit: "cover" }}
+            height="100%"
+            image={`https://${familyInfo.random_family_img_link}`}
+            alt={familyInfo.family_common_name}
+            title={familyInfo.family_common_name}
+          />
 
-          <CardContent sx={{ flexGrow: 1 }}>
+          <CardContent
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
             <Typography
               gutterBottom
-              variant="body1"
-              component="h3"
+              variant="h5"
+              component="h2"
               textAlign="center"
             >
-              {familyInfo.family_description}
+              {familyInfo.family_common_name} {familyInfo.family_scientific_name ? `(${familyInfo.family_scientific_name})` : ""}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="div"
+              textAlign="center"
+              sx={{
+                overflowY: "auto",
+                height: "150px",
+                px: 2,
+              }}
+            >
+              {familyInfo.family_description
+                ? familyInfo.family_description
+                : "We apologize for the inconvenience, but currently, we do not have any family description regarding this family. However, please rest assured that our team is working diligently to gather and add more information for you to enjoy. We appreciate your patience and understanding as we continue to improve and update our platform. Thank you for your support!"}
             </Typography>
           </CardContent>
         </Card>
-        <Divider />
-        <Card sx={{ height: "100%", display: "flex", flexDirection: "row" }}>
-          <CardContent sx={{ flexGrow: 1 }}>
-            <Typography gutterBottom variant="body1" component="h3">
-              Common name: {familyInfo.family_common_name}
-            </Typography>
-            <Typography gutterBottom variant="body1" component="h3">
-              Family: {familyInfo.family_scientific_name}
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-          <Typography gutterBottom variant="body1" component="h3">
-            Recent Sightings
-          </Typography>
-
-          <DataGrid
-            rows={familySpecies}
-            columns={columns}
-            pageSize={pageSize}
-            rowsPerPageOptions={[5, 10, 25]}
-            onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-            autoHeight
-          />
-        </Card>
-
-        <CardActions>
-          <Button component={Link} to="/" variant="outlined" size="large">
-            Back
-          </Button>
-        </CardActions>
       </Box>
     </Container>
   );

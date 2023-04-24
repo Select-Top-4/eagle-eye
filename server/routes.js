@@ -516,6 +516,8 @@ const getOneFamily = async function (req, res) {
       family.family_code = '${req.params.family_code}'
       AND species_img_link IS NOT NULL
       AND TRIM(species_img_link) != ""
+      AND species_img_link != "No image src"
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter")
     ORDER BY RAND()
     LIMIT 1; 
   `,
