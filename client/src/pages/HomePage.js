@@ -12,15 +12,17 @@ import { Link } from "react-router-dom";
 import config from "../config.json";
 
 export default function HomePage() {
-  const [birdOfTheDay, setBirdOfTheDay] = useState();
+  const [birdOfTheDay, setBirdOfTheDay] = useState({});
+
   useEffect(() => {
+    console.log("Fetching bird of the day");
     fetch(`http://${config.server_host}:${config.server_port}/random/species`)
       .then(res => res.json())
       .then(resJson => setBirdOfTheDay(resJson))
       .catch(error => console.log(error));
-  }, []);
+  }, []);  
 
-  if (!birdOfTheDay) {
+  if (!birdOfTheDay || !birdOfTheDay.common_name) {
     return (
       <Box
         sx={{
@@ -87,7 +89,7 @@ export default function HomePage() {
               borderRadius: 1,
               ml: 2,
             }}
-            image={"https://" + birdOfTheDay.species_img_link}
+            image={`https://${birdOfTheDay.species_img_link}`}
             alt={birdOfTheDay.common_name}
             title={birdOfTheDay.common_name}
           />

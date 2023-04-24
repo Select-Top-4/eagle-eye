@@ -73,6 +73,7 @@ const getRandomSpecies = async function (_, res) {
         console.log(err);
         res.json({});
       } else {
+        console.log(data[0]);
         res.json(data[0]);
       }
     }
