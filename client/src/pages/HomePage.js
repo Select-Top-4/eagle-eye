@@ -8,8 +8,8 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-import config from "../config.json";
 import { Link } from "react-router-dom";
+import config from "../config.json";
 
 export default function HomePage() {
   const [birdOfTheDay, setBirdOfTheDay] = useState();

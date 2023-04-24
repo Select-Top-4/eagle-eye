@@ -227,7 +227,9 @@ const getOneSpecies = async function (req, res) {
  * // Response:
  * // [
  * //   {"observation_count":1,
+ * //   "observation_date":"2021-04-25T00:00:00.000Z",
  * //   "first_name":"Anonymous",
+ * //   "last_name":"",
  * //   "location_name":"Green Hills County Park, Raleigh US-NC (35.9113,-78.5758)"
  * //   },
  * //   ...
@@ -237,7 +239,9 @@ const get5LatestObservationsBySpeciesCode = async function (req, res) {
   let query = `
     SELECT 
       observation_count,
+      observation_date,
       ebird_user.first_name,
+      ebird_user.last_name,
       location_name
     FROM 
       observation  
