@@ -17,11 +17,20 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import config from '../config.json';
 import { Link } from 'react-router-dom';
+import { DataGrid } from '@mui/x-data-grid';
 
 export default function FamilyPage() {
   const { family_code } = useParams();
   const [familyInfo, setFamilyInfo] = useState({});
   const [familySpecies, setFamilySpecies] = useState({});
+  const [pageSize, setPageSize] = useState(10);
+
+  const columns = [
+    {field: 'common_name', headerName: 'Species', flex: 1, renderCell: (params) => (
+      <Link to={`/species/${params.id}`}>{params.row.common_name}</Link>
+    )}  
+  ]
+
   useEffect(() => {
     fetch(
       `http://${config.server_host}:${config.server_port}/family/${family_code}`
@@ -32,7 +41,7 @@ export default function FamilyPage() {
   }, []);
   useEffect(() => {
     fetch(
-      `http://${config.server_host}:${config.server_port}/species/family/${family_code}`
+      `http://${config.server_host}:${config.server_port}/family/${family_code}/species`
     )
       .then(res => res.json())
       .then(resJson => {
@@ -81,9 +90,6 @@ export default function FamilyPage() {
             <Typography gutterBottom variant="body1" component="h3">
               Family: {familyInfo.family_scientific_name}
             </Typography>
-            <Typography gutterBottom variant="body1" component="h3">
-              {familyInfo.family_description}
-            </Typography>
           </CardContent>
 
 
@@ -95,40 +101,14 @@ export default function FamilyPage() {
               Recent Sightings 
         </Typography>
 
-        
-          {/* <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Dessert (100g serving)</TableCell>
-                  <TableCell align="right">Calories</TableCell>
-                  <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                  <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                  <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((sightings) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
-                    <TableCell align="right">{row.fat}</TableCell>
-                    <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-    </TableContainer> */}
-          
-          
-
-
+        <DataGrid
+            rows={familySpecies}
+            columns={columns}
+            pageSize={pageSize}
+            rowsPerPageOptions={[5, 10, 25]}
+            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            autoHeight
+        />
           
         </Card>
 

@@ -551,7 +551,7 @@ const getAllSpeciesByFamilyCode = async function (req, res) {
   connection.query(
     `
     SELECT
-      species_code,
+      species_code AS id,
       common_name,
       scientific_name
     FROM 
