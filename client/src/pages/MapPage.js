@@ -312,7 +312,7 @@ export default function MapPage() {
             size: "small",
           }}
         >
-          {mapType === "heatmap" ? "Show Scatter Map" : "Show Heat Map"}
+          {mapType === "heatmap" ? "Specific Observations" : "State Heat Map"}
         </Button>
         {mapType === "heatmap" ? (
           <HeatMap birdObservations={birdObservations} />
