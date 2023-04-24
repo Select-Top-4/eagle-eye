@@ -14,7 +14,9 @@ import {
   TableHead,
   TableRow,
   Button,
+  IconButton,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Link } from "react-router-dom";
 import config from "../config.json";
 
@@ -30,7 +32,8 @@ export default function SpeciesPage() {
       .then(res => res.json())
       .then(resJson => setSpeciesInfo(resJson))
       .catch(error => console.log(error));
-  }, []);
+  }, [species_code]);
+
   useEffect(() => {
     fetch(
       `http://${config.server_host}:${config.server_port}/species/${species_code}/5-latest-observations`
@@ -38,7 +41,7 @@ export default function SpeciesPage() {
       .then(res => res.json())
       .then(resJson => setSightings(resJson))
       .catch(error => console.log(error));
-  }, []);
+  }, [species_code]);
 
   if (!speciesInfo) {
     return (
@@ -60,14 +63,40 @@ export default function SpeciesPage() {
       <Box m={2} pt={3}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="h3"
-              textAlign="center"
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                mb: 2
+              }}
             >
-              {speciesInfo.common_name}
-            </Typography>
+              <IconButton
+                component={Link}
+                to="/"
+                sx={{
+                  mr: 2,
+                  border: "1px solid",
+                  borderColor: "purple",
+                  borderRadius: 1,
+                  "&:hover": {
+                    backgroundColor: "rgba(128, 0, 128, 0.1)",
+                  },
+                }}
+              >
+                <ArrowBackIcon sx={{ color: "purple" }} />
+              </IconButton>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h3"
+                mb={0}
+                align="center"
+              >
+                {speciesInfo.common_name}
+              </Typography>
+            </Box>
           </Grid>
 
           <Grid container spacing={2}>
@@ -89,7 +118,11 @@ export default function SpeciesPage() {
                   src={"https://" + speciesInfo.species_img_link}
                   alt={speciesInfo.common_name}
                   title={speciesInfo.common_name}
-                  style={{ width: "100%", height: "200px", borderRadius: "4px" }}
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                    borderRadius: "4px",
+                  }}
                 />
               </Paper>
             </Grid>
@@ -164,11 +197,11 @@ export default function SpeciesPage() {
                   gutterBottom
                   variant="body1"
                   component="h3"
-                  textAlign="center"
+                  align="center"
                   flexGrow={1}
                   sx={{
                     overflowY: "auto",
-                    maxHeight: "200px", // Adjust maxHeight according to your preference
+                    height: "200px",
                   }}
                 >
                   {speciesInfo.species_description}
@@ -177,9 +210,9 @@ export default function SpeciesPage() {
             </Grid>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid container>
             <Typography gutterBottom variant="body1" component="h2">
-              Recent Sightings
+              Here are the 5 latest observations of {speciesInfo.common_name}:
             </Typography>
             <TableContainer component={Paper} sx={{ mb: 3 }}>
               <Table sx={{ minWidth: 650 }}>
@@ -207,11 +240,6 @@ export default function SpeciesPage() {
               </Table>
             </TableContainer>
           </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Button component={Link} to="/" variant="outlined" size="large">
-            Back
-          </Button>
         </Grid>
       </Box>
     </Container>

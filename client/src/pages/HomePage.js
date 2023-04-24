@@ -26,37 +26,42 @@ function SpeciesCard({ species }) {
 
   return (
     <Grid item xs={6} sm={4} md={3} lg={2} key={species.species_code}>
-      <CardFlip isFlipped={isFlipped}>
-        <Paper
-          elevation={3}
-          sx={{
-            p: 1,
-            borderRadius: 2,
-            height: "200px",
-            backgroundSize: "cover",
-            backgroundImage: `url(https://${species.species_img_link})`,
-          }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        />
-        <Paper
-          elevation={3}
-          sx={{
-            p: 1,
-            borderRadius: 2,
-            height: "200px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <Typography variant="h6" component="h3" textAlign="center">
-            {species.common_name}
-          </Typography>
-        </Paper>
-      </CardFlip>
+      <Link
+        to={`/species/${species.species_code}`}
+        style={{ textDecoration: "none" }}
+      >
+        <CardFlip isFlipped={isFlipped}>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 1,
+              borderRadius: 2,
+              height: "200px",
+              backgroundSize: "cover",
+              backgroundImage: `url(https://${species.species_img_link})`,
+            }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          />
+          <Paper
+            elevation={3}
+            sx={{
+              p: 1,
+              borderRadius: 2,
+              height: "200px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <Typography variant="h6" component="h3" textAlign="center">
+              {species.common_name}
+            </Typography>
+          </Paper>
+        </CardFlip>
+      </Link>
     </Grid>
   );
 }

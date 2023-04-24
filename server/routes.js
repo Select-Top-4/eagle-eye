@@ -65,7 +65,7 @@ const getRandomSpecies = async function (_, res) {
       AND TRIM(species_img_link) != ""
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
-      AND (species_img_link NOT LIKE "%Question_book%")
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter")
       AND species_code IN (SELECT species_code FROM observation)
     ORDER BY RAND()
     LIMIT 1;
@@ -141,7 +141,7 @@ const getAllSpecies = async function (req, res) {
       AND TRIM(species_img_link) != ""
       AND species_img_link IS NOT NULL
       AND species_img_link != "No image src"
-      AND (species_img_link NOT LIKE "%Question_book%")
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter")
       AND species_code IN (SELECT species_code FROM observation)
     ORDER BY RAND()
     LIMIT ?, ?;
