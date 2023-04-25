@@ -30,7 +30,7 @@ export default function NavBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <NavText href="/" text="Eagle Eye" isMain icon={<ForestIcon />} />
-          <NavText href="/map" text="Maps" icon={<MapIcon />} />
+          <NavText href="/map" text="Observe in Map" icon={<MapIcon />} />
         </Toolbar>
       </Container>
     </AppBar>
