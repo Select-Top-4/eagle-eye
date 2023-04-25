@@ -105,22 +105,24 @@ const HeatMap = ({ birdObservations }) => {
   }, [birdObservations]);
 
   const handleMouseMove = e => {
-    const features =  mapRef.current.queryRenderedFeatures(e.point, {
-      layers: ["choropleth"],
-    });
-
-    if (features.length > 0) {
-      const feature = features[0];
-      setHoveredState({
-        totalCount: feature.properties.totalCount,
-        state: feature.properties.name,
-        longitude: e.lngLat.lng,
-        latitude: e.lngLat.lat,
+    if (mapRef.current.getLayer("choropleth")) {
+      const features = mapRef.current.queryRenderedFeatures(e.point, {
+        layers: ["choropleth"],
       });
-      setHoveredStateName(feature.properties.name);
-    } else {
-      setHoveredState(null);
-      setHoveredStateName(null);
+
+      if (features.length > 0) {
+        const feature = features[0];
+        setHoveredState({
+          totalCount: feature.properties.totalCount,
+          state: feature.properties.name,
+          longitude: e.lngLat.lng,
+          latitude: e.lngLat.lat,
+        });
+        setHoveredStateName(feature.properties.name);
+      } else {
+        setHoveredState(null);
+        setHoveredStateName(null);
+      }
     }
   };
 
@@ -192,11 +194,13 @@ const HeatMap = ({ birdObservations }) => {
           closeOnClick={false}
           onClose={() => setHoveredState(null)}
           offset={20}
-          className="custom-popup"
+          className="custom-popup-heatmap"
         >
-          <div>
-            <h3>{hoveredState.state}</h3>
-            <p>Total Count: {hoveredState.totalCount}</p>
+          <div className="custom-popup-heatmap">
+            <h3 className="popup-info">{hoveredState.state}</h3>
+            <h3 className="popup-info">
+              Total Count: {hoveredState.totalCount}
+            </h3>
           </div>
         </Popup>
       )}

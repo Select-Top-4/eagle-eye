@@ -46,24 +46,28 @@ const BirdMap = ({ birdObservations }) => {
   };
 
   const handleClick = useCallback(e => {
-    const features = mapRef.current.queryRenderedFeatures(e.point, {
-      layers: ["observations"],
-    });
-    if (features.length) {
-      setClickedObservation(features[0]);
-    } else {
-      setClickedObservation(null);
+    if (mapRef.current.getLayer("observations")) {
+      const features = mapRef.current.queryRenderedFeatures(e.point, {
+        layers: ["observations"],
+      });
+      if (features.length) {
+        setClickedObservation(features[0]);
+      } else {
+        setClickedObservation(null);
+      }
     }
   }, []);
 
   const handleMouseMove = useCallback(e => {
-    const features = mapRef.current.queryRenderedFeatures(e.point, {
-      layers: ["observations"],
-    });
-    if (features.length) {
-      setHoveredObservation(features[0]);
-    } else {
-      setHoveredObservation(null);
+    if (mapRef.current.getLayer("observations")) {
+      const features = mapRef.current.queryRenderedFeatures(e.point, {
+        layers: ["observations"],
+      });
+      if (features.length) {
+        setHoveredObservation(features[0]);
+      } else {
+        setHoveredObservation(null);
+      }
     }
   }, []);
 
@@ -136,7 +140,7 @@ const BirdMap = ({ birdObservations }) => {
               </h3>
               <p>Family: {hoveredObservation.properties.family_common_name}</p>
               <p>
-                Location: {hoveredObservation.properties.subnational1_name}, 
+                Location: {hoveredObservation.properties.subnational1_name},
                 {" " + hoveredObservation.properties.subnational2_name}
               </p>
               <p>Total Count: {hoveredObservation.properties.total_count}</p>
@@ -174,7 +178,7 @@ const BirdMap = ({ birdObservations }) => {
               </h3>
               <p>Family: {clickedObservation.properties.family_common_name}</p>
               <p>
-                Location: {clickedObservation.properties.subnational1_name}, 
+                Location: {clickedObservation.properties.subnational1_name},
                 {" " + clickedObservation.properties.subnational2_name}
               </p>
               <p>Total Count: {clickedObservation.properties.total_count}</p>
