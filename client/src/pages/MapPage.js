@@ -76,6 +76,25 @@ const columns = [
   { field: "family_scientific_name", headerName: "Family Scientific Name" },
   { field: "total_count", headerName: "Total Count" },
 ];
+const columnsWithBirdImage = [
+  {
+    headerName: "Bird Image",
+    field: "bird_image",
+    renderCell: row => (
+      <img
+        src={`https://${row.species_img_link}`}
+        alt={row.common_name}
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "50%",
+          objectFit: "cover",
+        }}
+      />
+    ),
+  },
+  ...columns,
+];
 
 export default function MapPage() {
   const [birdObservations, setBirdObservations] = useState(null);
@@ -138,11 +157,11 @@ export default function MapPage() {
       })
       .catch(error => console.log(error));
 
-      setSpeciesRankingRoute(
-        `http://${config.server_host}:${
-          config.server_port
-        }/heatmap-observations/species-ranking?${params.toString()}`
-      );
+    setSpeciesRankingRoute(
+      `http://${config.server_host}:${
+        config.server_port
+      }/heatmap-observations/species-ranking?${params.toString()}`
+    );
   };
 
   const toggleMapType = () => {
@@ -320,10 +339,10 @@ export default function MapPage() {
           <ScatterMap birdObservations={birdObservations} />
         )}
       </Box>
-      {(birdObservations.length && speciesRankingRoute) && (
+      {birdObservations.length && speciesRankingRoute && (
         <LazyTable
           route={speciesRankingRoute}
-          columns={columns}
+          columns={columnsWithBirdImage}
           defaultPageSize={5}
           rowsPerPageOptions={[5, 10, 25]}
         />
