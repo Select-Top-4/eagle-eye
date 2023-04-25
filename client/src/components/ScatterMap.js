@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useRef } from "react";
 import MapGL, { Source, Layer, Popup, NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./css/Popup.css";
+import { Link } from "react-router-dom";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 const BirdMap = ({ birdObservations }) => {
   const mapRef = useRef();
-
-  const [selectedObservation, setSelectedObservation] = useState(null);
-
+  const [hoveredObservation, setHoveredObservation] = useState(null);
+  const [clickedObservation, setClickedObservation] = useState(null);
   const [viewport, setViewport] = useState({
     latitude: 39.833333,
     longitude: -98.583333,
@@ -31,10 +31,10 @@ const BirdMap = ({ birdObservations }) => {
     })),
   };
 
-  const selectedGeojson = selectedObservation
+  const selectedGeojson = hoveredObservation
     ? {
         type: "FeatureCollection",
-        features: [selectedObservation],
+        features: [hoveredObservation],
       }
     : {
         type: "FeatureCollection",
@@ -45,6 +45,28 @@ const BirdMap = ({ birdObservations }) => {
     setViewport(newViewport);
   };
 
+  const handleClick = useCallback(e => {
+    const features = mapRef.current.queryRenderedFeatures(e.point, {
+      layers: ["observations"],
+    });
+    if (features.length) {
+      setClickedObservation(features[0]);
+    } else {
+      setClickedObservation(null);
+    }
+  }, []);
+
+  const handleMouseMove = useCallback(e => {
+    const features = mapRef.current.queryRenderedFeatures(e.point, {
+      layers: ["observations"],
+    });
+    if (features.length) {
+      setHoveredObservation(features[0]);
+    } else {
+      setHoveredObservation(null);
+    }
+  }, []);
+
   return (
     <MapGL
       ref={mapRef}
@@ -54,18 +76,8 @@ const BirdMap = ({ birdObservations }) => {
       mapStyle="mapbox://styles/mapbox/dark-v10"
       onMove={e => handleViewportChange(e.viewState)}
       mapboxAccessToken={MAPBOX_TOKEN}
-      // onClick={(e) => {
-      //     const features = mapRef.current.queryRenderedFeatures(e.point, {
-      //         layers: ["observations"],
-      //     });
-      //     setSelectedObservation(features[0]);
-      // }}
-      onMouseMove={e => {
-        const features = mapRef.current.queryRenderedFeatures(e.point, {
-          layers: ["observations", "selectedObservationLayer"],
-        });
-        setSelectedObservation(features[0]);
-      }}
+      onClick={handleClick}
+      onMouseMove={handleMouseMove}
     >
       <NavigationControl style={{ top: 10, right: 10 }} />
 
@@ -79,15 +91,12 @@ const BirdMap = ({ birdObservations }) => {
             "circle-stroke-width": 1,
             "circle-stroke-color": "#ffffff",
           }}
-          onHover={e => {
-            setSelectedObservation(e.features[0]);
-          }}
         />
       </Source>
 
-      <Source id="selectedObservation" type="geojson" data={selectedGeojson}>
+      <Source id="hoveredObservation" type="geojson" data={selectedGeojson}>
         <Layer
-          id="selectedObservationLayer"
+          id="hoveredObservationLayer"
           type="circle"
           paint={{
             "circle-radius": 7,
@@ -98,46 +107,78 @@ const BirdMap = ({ birdObservations }) => {
         />
       </Source>
 
-      {/* {selectedObservation && (
-                <Popup
-                    latitude={selectedObservation.geometry.coordinates[1]}
-                    longitude={selectedObservation.geometry.coordinates[0]}
-                    closeButton={false}
-                    closeOnClick={false}
-                    onClose={() => setSelectedObservation(null)}
-                    anchor="top"
-                >
-                    <div>
-                        <h3>{selectedObservation.properties.common_name}</h3>
-                        <p>Scientific Name: {selectedObservation.properties.scientific_name}</p>
-                        <p>Family: {selectedObservation.properties.family_common_name}</p>
-                        <p>Location: {selectedObservation.properties.subnational1_name}, {selectedObservation.properties.subnational2_name}</p>
-                        <p>Total Count: {selectedObservation.properties.total_count}</p>
-                    </div>
-                </Popup>
-            )} */}
-
-      {selectedObservation && (
+      {hoveredObservation && !clickedObservation && (
         <Popup
-          latitude={selectedObservation.geometry.coordinates[1]}
-          longitude={selectedObservation.geometry.coordinates[0]}
+          latitude={hoveredObservation.geometry.coordinates[1]}
+          longitude={hoveredObservation.geometry.coordinates[0]}
           closeButton={false}
           closeOnClick={false}
-          onClose={() => setSelectedObservation(null)}
+          onClose={() => setHoveredObservation(null)}
           offset={20}
           className="custom-popup"
         >
-          <div>
-            <h3>{selectedObservation.properties.common_name}</h3>
-            <p>
-              Scientific Name: {selectedObservation.properties.scientific_name}
-            </p>
-            <p>Family: {selectedObservation.properties.family_common_name}</p>
-            <p>
-              Location: {selectedObservation.properties.subnational1_name},{" "}
-              {selectedObservation.properties.subnational2_name}
-            </p>
-            <p>Total Count: {selectedObservation.properties.total_count}</p>
+          <div className="popup-content">
+            <div className="popup-image-container">
+              <img
+                className="popup-image"
+                src={`https://${hoveredObservation.properties.species_img_link}`}
+                alt={hoveredObservation.properties.common_name}
+              />
+            </div>
+            <div className="popup-info">
+              <h3>
+                <Link
+                  to={`/species/${hoveredObservation.properties.species_code}`}
+                  className="popup-link"
+                >
+                  {hoveredObservation.properties.common_name}
+                </Link>
+              </h3>
+              <p>Family: {hoveredObservation.properties.family_common_name}</p>
+              <p>
+                Location: {hoveredObservation.properties.subnational1_name}, 
+                {" " + hoveredObservation.properties.subnational2_name}
+              </p>
+              <p>Total Count: {hoveredObservation.properties.total_count}</p>
+            </div>
+          </div>
+        </Popup>
+      )}
+
+      {clickedObservation && (
+        <Popup
+          latitude={clickedObservation.geometry.coordinates[1]}
+          longitude={clickedObservation.geometry.coordinates[0]}
+          closeButton={true}
+          closeOnClick={false}
+          onClose={() => setClickedObservation(null)}
+          offset={20}
+          className="custom-popup"
+        >
+          <div className="popup-content">
+            <div className="popup-image-container">
+              <img
+                className="popup-image"
+                src={`https://${clickedObservation.properties.species_img_link}`}
+                alt={clickedObservation.properties.common_name}
+              />
+            </div>
+            <div className="popup-info">
+              <h3>
+                <Link
+                  to={`/species/${clickedObservation.properties.species_code}`}
+                  className="popup-link"
+                >
+                  {clickedObservation.properties.common_name}
+                </Link>
+              </h3>
+              <p>Family: {clickedObservation.properties.family_common_name}</p>
+              <p>
+                Location: {clickedObservation.properties.subnational1_name}, 
+                {" " + clickedObservation.properties.subnational2_name}
+              </p>
+              <p>Total Count: {clickedObservation.properties.total_count}</p>
+            </div>
           </div>
         </Popup>
       )}

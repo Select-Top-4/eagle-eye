@@ -744,6 +744,7 @@ const searchHeatMapObservations = async function (req, res) {
           species.family_code,
           scientific_name,
           common_name,
+          species_img_link,
           observation_count
         FROM
           observation
@@ -814,6 +815,7 @@ const searchHeatMapObservations = async function (req, res) {
       )
     SELECT 
       species_code,
+      species_img_link,
       S.family_code,
       S.location_id,
       latitude,
@@ -831,7 +833,7 @@ const searchHeatMapObservations = async function (req, res) {
       ON S.family_code = F.family_code
     JOIN locations_filtered L
       ON S.location_id = L.location_id
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11;
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12;
   `;
 
   connection.query(query, (err, data) => {
