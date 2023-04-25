@@ -750,7 +750,11 @@ const searchHeatMapObservations = async function (req, res) {
         JOIN species 
           ON observation.species_code = species.species_code
         WHERE 
-          ${
+          species_img_link IS NOT NULL
+          AND TRIM(species_img_link) != ""
+          AND species_img_link != "No image src"
+          AND (species_img_link NOT REGEXP "Question_book|Wiki_letter|_map")
+          AND ${
             common_name ? `LOWER(common_name) LIKE '%${common_name}%'` : "1 = 1"
           }
           AND ${
@@ -1018,6 +1022,11 @@ const getSpeciesRankingByHeatMapObservations = async function (req, res) {
       ON S.family_code = F.family_code
     JOIN locations_filtered L
       ON S.location_id = L.location_id
+    WHERE 
+      species_img_link IS NOT NULL
+      AND TRIM(species_img_link) != ""
+      AND species_img_link != "No image src"
+      AND (species_img_link NOT REGEXP "Question_book|Wiki_letter|_map")
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
     ORDER BY 9 DESC
     LIMIT ?, ?;
