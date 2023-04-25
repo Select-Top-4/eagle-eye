@@ -12,6 +12,7 @@ import config from "../config.json";
 import ScatterMap from "../components/ScatterMap";
 import HeatMap from "../components/HeatMap";
 import LazyTable from "../components/LazyTable";
+import { Link } from "react-router-dom";
 
 const US_STATES = [
   "Alaska",
@@ -69,13 +70,6 @@ const US_STATES = [
 const currentYear = new Date().getFullYear();
 const minDate = `${currentYear}-01-01`;
 const maxDate = `${currentYear}-12-31`;
-const columns = [
-  { field: "common_name", headerName: "Common Name" },
-  { field: "scientific_name", headerName: "Scientific Name" },
-  { field: "family_common_name", headerName: "Family Common Name" },
-  { field: "family_scientific_name", headerName: "Family Scientific Name" },
-  { field: "total_count", headerName: "Total Count" },
-];
 const columnsWithBirdImage = [
   {
     headerName: "Bird Image",
@@ -93,7 +87,31 @@ const columnsWithBirdImage = [
       />
     ),
   },
-  ...columns,
+  {
+    headerName: "Common Name",
+    field: "common_name",
+    renderCell: row => (
+      <Link
+        to={`/species/${row.species_code}`}
+      >
+        {row.common_name}
+      </Link>
+    ),
+  },
+  { field: "scientific_name", headerName: "Scientific Name" },
+  {
+    headerName: "Family Common Name",
+    field: "family_common_name",
+    renderCell: row => (
+      <Link
+        to={`/family/${row.family_code}`}
+      >
+        {row.family_common_name}
+      </Link>
+    ),
+  },
+  { field: "family_scientific_name", headerName: "Family Scientific Name" },
+  { field: "total_count", headerName: "Total Count" },
 ];
 
 export default function MapPage() {

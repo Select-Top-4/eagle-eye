@@ -63,15 +63,13 @@ export default function LazyTable({
         <TableBody>
           {data.map((row, idx) => (
             <TableRow key={idx}>
-              {
-                columns.map(col => (
-                  <TableCell key={col.headerName}>
-                    {col.renderCell
-                      ? col.renderCell(row)
-                      : defaultRenderCell(col, row)}
-                  </TableCell>
-                ))
-              }
+              {columns.map(col => (
+                <TableCell key={col.headerName}>
+                  {col.renderCell
+                    ? col.renderCell(row)
+                    : defaultRenderCell(col, row)}
+                </TableCell>
+              ))}
             </TableRow>
           ))}
         </TableBody>
