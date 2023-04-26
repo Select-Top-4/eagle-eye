@@ -66,7 +66,7 @@ const TimelineChart = ({ speciesCode }) => {
             tickCount={
               Math.max(...chartData.map(item => item.observation_count)) + 1
             }
-            domain={[0, "dataMax+1"]}
+            domain={[0, "dataMax+3"]}
           />
           <Tooltip content={<CustomTooltip />} />
           <Line

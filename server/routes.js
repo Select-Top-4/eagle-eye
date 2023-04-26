@@ -299,7 +299,7 @@ const get5LatestObservationsBySpeciesCode = async function (req, res) {
 const getLast30DailyObservationCountBySpeciesCode = async function (req, res) {
   let query = `
     SELECT 
-      COUNT(*) AS observation_count,
+      SUM(observation_count) AS observation_count,
       DATE(observation_date) AS observation_day
     FROM 
       observation  
