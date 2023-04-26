@@ -20,6 +20,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Link } from "react-router-dom";
 import TimelineChart from "../components/TimeLineChart";
 import config from "../config.json";
+import { formatFullDate } from "../helpers/formatter";
 
 export default function SpeciesPage() {
   const { species_code } = useParams();
@@ -232,7 +233,7 @@ export default function SpeciesPage() {
                     sightings.map((sighting, id) => (
                       <TableRow key={id}>
                         <TableCell component="th" scope="row">
-                          {sighting.observation_date}
+                          {formatFullDate(sighting.observation_date)}
                         </TableCell>
                         <TableCell>
                           <a
