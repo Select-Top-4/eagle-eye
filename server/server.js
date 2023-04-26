@@ -40,6 +40,10 @@ app.get("/random/species", routes.getRandomSpecies);
 app.get("/all-species", routes.getAllSpecies);
 app.get("/species/:species_code", routes.getOneSpecies);
 app.get(
+  "/species/:species_code/last-30-daily-observation-count",
+  routes.getLast30DailyObservationCountBySpeciesCode
+);
+app.get(
   "/species/:species_code/5-latest-observations",
   routes.get5LatestObservationsBySpeciesCode
 );

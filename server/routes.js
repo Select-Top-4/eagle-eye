@@ -226,7 +226,7 @@ const getOneSpecies = async function (req, res) {
  * @returns {Object[]} An array of at most 5 recent observations object, including count of birds observed,
  * the bird watcher's first name, and the location name for the observation
  * @example
- * //Request:
+ * // Request:
  * // GET /species/bkcchi/5-latest-observations
  * //
  * // Response:
@@ -259,6 +259,51 @@ const get5LatestObservationsBySpeciesCode = async function (req, res) {
     ORDER BY 
       observation_date DESC
     LIMIT 5;
+  `;
+
+  connection.query(query, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.json([]);
+    } else {
+      res.json(data);
+    }
+  });
+};
+
+/**
+ * @route GET /species/:species_code/last-30-daily-observation-count
+ * @description Get observation_count of a species by day for the past 30 days (2023-03-22 as last day).
+ * @param {Object} req - The request object
+ * @param {string} req.params.species_code - The species code of the bird species.
+ * @param {Object} res - The response object
+ * @returns {Object[]} An array of objects, where each object has a date and observation count for the given species,
+ * for the past 30 days.
+ * @example
+ * // Request:
+ * // GET /species/bkcchi/last-30-daily-observation-count
+ * //
+ * // Response:
+ * // [
+ * //   {"date":"2023-03-22", "observation_count":34},
+ * //   {"date":"2023-03-21", "observation_count":34},
+ * //   ...
+ * // ]
+ */
+const getLast30DailyObservationCountBySpeciesCode = async function (req, res) {
+  let query = `
+    SELECT 
+      COUNT(*) AS observation_count,
+      DATE(observation_date) AS observation_day
+    FROM 
+      observation  
+    WHERE 
+      species_code = '${req.params.species_code}'
+      AND observation_date >= DATE_SUB('2023-03-22', INTERVAL 30 DAY)
+    GROUP BY 
+      observation_day
+    ORDER BY 
+      observation_day DESC;
   `;
 
   connection.query(query, (err, data) => {
@@ -843,7 +888,12 @@ const searchHeatMapObservations = async function (req, res) {
     } else {
       const key = req.originalUrl;
       const cacheDuration = 5 * 60;
-      req.app.locals.redisClient.set(key, JSON.stringify(data), "EX", cacheDuration);
+      req.app.locals.redisClient.set(
+        key,
+        JSON.stringify(data),
+        "EX",
+        cacheDuration
+      );
       res.json(data);
     }
   });
@@ -1044,7 +1094,12 @@ const getSpeciesRankingByHeatMapObservations = async function (req, res) {
     } else {
       const key = req.originalUrl;
       const cacheDuration = 5 * 60;
-      req.app.locals.redisClient.set(key, JSON.stringify(data), "EX", cacheDuration);
+      req.app.locals.redisClient.set(
+        key,
+        JSON.stringify(data),
+        "EX",
+        cacheDuration
+      );
       res.json(data);
     }
   });
@@ -1055,6 +1110,7 @@ module.exports = function (redisClient) {
     getRandomSpecies,
     getAllSpecies,
     getOneSpecies,
+    getLast30DailyObservationCountBySpeciesCode,
     get5LatestObservationsBySpeciesCode,
     searchSpecificObservationsBySpeciesCode,
     getAllFamilies,
