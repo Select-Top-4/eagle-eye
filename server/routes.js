@@ -841,6 +841,9 @@ const searchHeatMapObservations = async function (req, res) {
       console.log(err);
       res.json([]);
     } else {
+      const key = req.originalUrl;
+      const cacheDuration = 5 * 60;
+      req.app.locals.redisClient.set(key, JSON.stringify(data), "EX", cacheDuration);
       res.json(data);
     }
   });
@@ -1039,21 +1042,26 @@ const getSpeciesRankingByHeatMapObservations = async function (req, res) {
       console.log(err);
       res.json([]);
     } else {
+      const key = req.originalUrl;
+      const cacheDuration = 5 * 60;
+      req.app.locals.redisClient.set(key, JSON.stringify(data), "EX", cacheDuration);
       res.json(data);
     }
   });
 };
 
-module.exports = {
-  getRandomSpecies,
-  getAllSpecies,
-  getOneSpecies,
-  get5LatestObservationsBySpeciesCode,
-  searchSpecificObservationsBySpeciesCode,
-  getAllFamilies,
-  getOneFamily,
-  getAllSpeciesByFamilyCode,
-  getLocationByID,
-  searchHeatMapObservations,
-  getSpeciesRankingByHeatMapObservations,
+module.exports = function (redisClient) {
+  return {
+    getRandomSpecies,
+    getAllSpecies,
+    getOneSpecies,
+    get5LatestObservationsBySpeciesCode,
+    searchSpecificObservationsBySpeciesCode,
+    getAllFamilies,
+    getOneFamily,
+    getAllSpeciesByFamilyCode,
+    getLocationByID,
+    searchHeatMapObservations,
+    getSpeciesRankingByHeatMapObservations,
+  };
 };
