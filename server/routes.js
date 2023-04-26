@@ -285,8 +285,14 @@ const get5LatestObservationsBySpeciesCode = async function (req, res) {
  * //
  * // Response:
  * // [
- * //   {"date":"2023-03-22", "observation_count":34},
- * //   {"date":"2023-03-21", "observation_count":34},
+ * //   {
+ * //       "observation_count": 34,
+ * //       "observation_day": "2023-03-22T04:00:00.000Z"
+ * //   },
+ * //   {
+ * //       "observation_count": 34,
+ * //       "observation_day": "2023-03-21T04:00:00.000Z"
+ * //   },
  * //   ...
  * // ]
  */
@@ -303,7 +309,7 @@ const getLast30DailyObservationCountBySpeciesCode = async function (req, res) {
     GROUP BY 
       observation_day
     ORDER BY 
-      observation_day DESC;
+      observation_day ASC;
   `;
 
   connection.query(query, (err, data) => {

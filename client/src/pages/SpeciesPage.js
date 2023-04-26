@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Link } from "react-router-dom";
+import TimelineChart from "../components/TimeLineChart";
 import config from "../config.json";
 
 export default function SpeciesPage() {
@@ -209,6 +210,8 @@ export default function SpeciesPage() {
               </Paper>
             </Grid>
           </Grid>
+
+          <TimelineChart speciesCode={species_code} />
 
           <Grid container>
             <Typography gutterBottom variant="body1" component="h2">

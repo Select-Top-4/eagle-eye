@@ -7,6 +7,7 @@ import HomePage from "./pages/HomePage";
 import SpeciesPage from "./pages/SpeciesPage";
 import FamilyPage from "./pages/FamilyPage";
 import MapPage from "./pages/MapPage";
+import "./App.css";
 
 export const theme = createTheme({
   palette: {

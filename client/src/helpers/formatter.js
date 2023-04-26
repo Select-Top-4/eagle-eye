@@ -1,14 +1,9 @@
-export function formatDuration(sec) {
-  const date = new Date(0);
-  date.setSeconds(sec ?? 0);
-  return date.toISOString().substring(14, 19);
+export function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" });
 }
 
-export function formatReleaseDate(date) {
-  const dateObj = new Date(Date.parse(date));
-  return dateObj.toLocaleString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+export function formatFullDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
 }
